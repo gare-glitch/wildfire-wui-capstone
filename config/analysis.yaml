@@ -1,0 +1,180 @@
+# =====================================================================
+# Analysis parameters — Stage 1 (MTBS wildfire x U.S. county database)
+# =====================================================================
+# Values in this file were chosen by inspecting the actual source data
+# (see docs/data_sources.md and PROJECT_STATUS.md "Key Decisions").
+# Do not change fire_types or years without re-inspecting the source data.
+# =====================================================================
+
+crs:
+  # Area computations for CONUS. Equal-area projected CRS (meters).
+  conus_equal_area: "EPSG:5070"   # NAD83 / Conus Albers
+  # Source TIGER/Line and MTBS CRSs are read from the files themselves.
+  # Native authority CRS of both TIGER/Line shapefiles is NAD83 (EPSG:4269);
+  # MTBS perimeters may arrive in other projected systems — always read it.
+
+fire_types:
+  # MTBS fire type field is `incid_type` (verified against the downloaded
+  # 2026-09-30 national archive). ACTUAL observed domain (differs from the
+  # FGDC metadata XML domain, which lists Unknown/Complex/Out-of-area):
+  #   Wildfire: 16,780 | Prescribed Fire: 9,639
+  #   Other: 4,311 | Wildland Fire Use: 203
+  include: ["Wildfire", "Wildland Fire Use"]
+  exclude: ["Prescribed Fire", "Other"]
+  rationale: >-
+    Wildland Fire Use events are naturally ignited wildfires managed for
+    resource benefit (wildfires under current interagency terminology) and are
+    retained. Prescribed fire is a management-ignition category and is
+    excluded from the primary wildfire analysis. 'Other' cannot be verified
+    as wildfire: the category is undocumented in the FGDC metadata domain,
+    is concentrated in 1984-2009 and in the Southeast (FL: 1,898 of 4,311),
+    and is excluded from the primary set; excluded events remain recorded in
+    the filter report and interim data for sensitivity analyses. See
+    docs/methodology.md for the full inclusion/exclusion discussion.
+
+years:
+  min_year: 1984        # first MTBS mapping year (Landsat TM era)
+  max_year: 2024        # last stable, completed MTBS year at time of Stage 1 build
+  rationale: >-
+    The national archive at download time also contained partial records for
+    later years (MTBS extended assessments for a fire year are completed
+    during the following growing season). Years after 2024 showed
+    clearly incomplete event counts relative to the historical
+    distribution and are excluded to avoid right-censoring. Revisit when
+    MTBS announces completion of the 2025 mapping year.
+
+scope:
+  conus_only: true
+  conus_state_fips:  # 48 contiguous states + DC
+    - "01"  # Alabama
+    - "04"  # Arizona
+    - "05"  # Arkansas
+    - "06"  # California
+    - "08"  # Colorado
+    - "09"  # Connecticut
+    - "10"  # Delaware
+    - "11"  # District of Columbia
+    - "12"  # Florida
+    - "13"  # Georgia
+    - "16"  # Idaho
+    - "17"  # Illinois
+    - "18"  # Indiana
+    - "19"  # Iowa
+    - "20"  # Kansas
+    - "21"  # Kentucky
+    - "22"  # Louisiana
+    - "23"  # Maine
+    - "24"  # Maryland
+    - "25"  # Massachusetts
+    - "26"  # Michigan
+    - "27"  # Minnesota
+    - "28"  # Mississippi
+    - "29"  # Missouri
+    - "30"  # Montana
+    - "31"  # Nebraska
+    - "32"  # Nevada
+    - "33"  # New Hampshire
+    - "34"  # New Jersey
+    - "35"  # New Mexico
+    - "36"  # New York
+    - "37"  # North Carolina
+    - "38"  # North Dakota
+    - "39"  # Ohio
+    - "40"  # Oklahoma
+    - "41"  # Oregon
+    - "42"  # Pennsylvania
+    - "44"  # Rhode Island
+    - "45"  # South Carolina
+    - "46"  # South Dakota
+    - "47"  # Tennessee
+    - "48"  # Texas
+    - "49"  # Utah
+    - "50"  # Vermont
+    - "51"  # Virginia
+    - "53"  # Washington
+    - "54"  # West Virginia
+    - "55"  # Wisconsin
+    - "56"  # Wyoming
+  non_conus_note: >-
+    Alaska, Hawaii, Puerto Rico, and other territories are excluded from
+    Stage 1 because EPSG:5070 is invalid for area measurement there; an
+    appropriate jurisdiction-specific equal-area CRS will be adopted for
+    them in a later stage. Excluded non-CONUS fire events are preserved in
+    data/interim for that future work.
+
+area_units: "km2"
+area_unit_factor: 1.0e-6          # m^2 -> km^2 (EPSG:5070 units are meters)
+
+intersection:
+  # Drop slivers smaller than this area (km^2) — geometry noise from
+  # floating-point overlays, not meaningful burned area.
+  min_intersection_area_km2: 0.0001   # 100 m^2 ; far below any real fire sliver
+  keep_geom_type: "polygon"
+
+aggregation:
+  county_year: ["GEOID", "year"]
+  pct_cap: null        # never clip percentages; investigate >100 cases instead
+  # Standard OMB/Census state FIPS -> name/abbreviation (public standard codes,
+  # used only for labeling outputs; STATEFP remains the machine key).
+  state_fips_names:
+    "01": {name: "Alabama", abbr: "AL"}
+    "04": {name: "Arizona", abbr: "AZ"}
+    "05": {name: "Arkansas", abbr: "AR"}
+    "06": {name: "California", abbr: "CA"}
+    "08": {name: "Colorado", abbr: "CO"}
+    "09": {name: "Connecticut", abbr: "CT"}
+    "10": {name: "Delaware", abbr: "DE"}
+    "11": {name: "District of Columbia", abbr: "DC"}
+    "12": {name: "Florida", abbr: "FL"}
+    "13": {name: "Georgia", abbr: "GA"}
+    "16": {name: "Idaho", abbr: "ID"}
+    "17": {name: "Illinois", abbr: "IL"}
+    "18": {name: "Indiana", abbr: "IN"}
+    "19": {name: "Iowa", abbr: "IA"}
+    "20": {name: "Kansas", abbr: "KS"}
+    "21": {name: "Kentucky", abbr: "KY"}
+    "22": {name: "Louisiana", abbr: "LA"}
+    "23": {name: "Maine", abbr: "ME"}
+    "24": {name: "Maryland", abbr: "MD"}
+    "25": {name: "Massachusetts", abbr: "MA"}
+    "26": {name: "Michigan", abbr: "MI"}
+    "27": {name: "Minnesota", abbr: "MN"}
+    "28": {name: "Mississippi", abbr: "MS"}
+    "29": {name: "Missouri", abbr: "MO"}
+    "30": {name: "Montana", abbr: "MT"}
+    "31": {name: "Nebraska", abbr: "NE"}
+    "32": {name: "Nevada", abbr: "NV"}
+    "33": {name: "New Hampshire", abbr: "NH"}
+    "34": {name: "New Jersey", abbr: "NJ"}
+    "35": {name: "New Mexico", abbr: "NM"}
+    "36": {name: "New York", abbr: "NY"}
+    "37": {name: "North Carolina", abbr: "NC"}
+    "38": {name: "North Dakota", abbr: "ND"}
+    "39": {name: "Ohio", abbr: "OH"}
+    "40": {name: "Oklahoma", abbr: "OK"}
+    "41": {name: "Oregon", abbr: "OR"}
+    "42": {name: "Pennsylvania", abbr: "PA"}
+    "44": {name: "Rhode Island", abbr: "RI"}
+    "45": {name: "South Carolina", abbr: "SC"}
+    "46": {name: "South Dakota", abbr: "SD"}
+    "47": {name: "Tennessee", abbr: "TN"}
+    "48": {name: "Texas", abbr: "TX"}
+    "49": {name: "Utah", abbr: "UT"}
+    "50": {name: "Vermont", abbr: "VT"}
+    "51": {name: "Virginia", abbr: "VA"}
+    "53": {name: "Washington", abbr: "WA"}
+    "54": {name: "West Virginia", abbr: "WV"}
+    "55": {name: "Wisconsin", abbr: "WI"}
+    "56": {name: "Wyoming", abbr: "WY"}
+
+validation:
+  max_annual_pct_warn: 100.0     # annual pct above this triggers WARN + investigation
+  max_footprint_pct_hard: 100.0 # dissolved footprint pct above this is CRITICAL
+  min_county_area_km2: 5.0      # counties smaller than this are implausible for CONUS
+  max_county_area_km2: 55000.0   # largest CONUS county ~52,000 km^2 (San Bernardino, CA)
+
+mapping:
+  dpi: 200
+  colormap_burned_area: "YlOrRd"
+  colormap_fire_count: "OrRd"
+  colormap_footprint: "PuOr"

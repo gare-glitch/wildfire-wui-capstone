@@ -1,0 +1,53 @@
+# =====================================================================
+# Dataset source registry — wildfire-wui-capstone
+# =====================================================================
+# Machine-readable provenance for every dataset consumed by the pipeline.
+# `src/download_data.py` reads this file, downloads to data/raw/<key>/,
+# and writes retrieval metadata to data/raw/provenance.json.
+#
+# RULES (see AGENTS.md): URLs must be authoritative (agency-operated hosts),
+# never mirrors. Do not edit URLs without re-verifying them against the
+# publisher's documentation pages recorded below.
+# =====================================================================
+
+mtbs_perimeter:
+  display_name: "MTBS Burned Area Boundaries (national fire perimeter dataset)"
+  provider: "Monitoring Trends in Burn Severity (MTBS) — USGS Earth Resources Observation and Science (EROS) Center & USDA Forest Service"
+  url: "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
+  format: "zipped ESRI polygon shapefile"
+  expected_archive_member_suffix: ".shp"
+  # Authoritative program/documentation pages (used to verify the URL and
+  # dataset currency; the direct-download portal is a JS app, but the
+  # publisher's product description documents this exact file name):
+  documentation_urls:
+    - "https://mtbs.gov/product-descriptions"
+    - "https://burnseverity.cr.usgs.gov/products/mtbs"
+    - "https://burnseverity.cr.usgs.gov/direct-download"
+  documented_file_name: "mtbs_perimeter_data.zip"
+  spatial_coverage: "CONUS, Alaska, Hawaii, Puerto Rico"
+  temporal_coverage: "1984 - present (most recent years may be incomplete)"
+  projection_note: >-
+    Publisher distributes products in NAD83 USGS Albers (CONUS) or local UTM;
+    verify actual CRS from the .prj at load time — never assume.
+  large_fire_threshold_note: >-
+    MTBS maps only large fires: approximately >=405 ha (1,000 acres) in the
+    western U.S. and >=202 ha (500 acres) in the eastern U.S.
+  renewal: "Quarterly releases (national composite archive is refreshed in place)"
+
+census_counties:
+  display_name: "2025 TIGER/Line Shapefile: U.S. Counties and County Equivalents (national file)"
+  provider: "U.S. Census Bureau"
+  url: "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip"
+  format: "zipped ESRI polygon shapefile"
+  expected_archive_member_suffix: ".shp"
+  documentation_urls:
+    - "https://www.census.gov/geographies/mapping-files/2025/geo/tiger-line-file.html"
+    - "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/"
+  documented_file_name: "tl_2025_us_county.zip"
+  release_date: "2025-09-23"
+  boundaries_as_of: "2025-01-01"
+  spatial_coverage: "All U.S. states, DC, and territories (county equivalents included)"
+  geographic_note: >-
+    Includes Virginia independent cities as county equivalents; GEOID
+    (STATEFP+COUNTYFP) is the canonical identifier.
+  renewal: "Annual release (next: TIGER 2026, typically mid/late September 2026)"
