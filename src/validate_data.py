@@ -182,9 +182,18 @@ def check_va_independent_cities(counties: gpd.GeoDataFrame) -> CheckResult:
     )
 
 
+def _safe_crs(gdf: gpd.GeoDataFrame):
+    """GeoDataFrame.crs raises AttributeError (rather than returning None)
+    when no active geometry column is set; normalize that to None."""
+    try:
+        return gdf.crs
+    except AttributeError:
+        return None
+
+
 def check_missing_crs(named_gdfs: dict[str, gpd.GeoDataFrame]) -> CheckResult:
     """Every spatial output must carry a CRS."""
-    missing = [name for name, g in named_gdfs.items() if g.crs is None]
+    missing = [name for name, g in named_gdfs.items() if _safe_crs(g) is None]
     return CheckResult(
         check_id="geo-01",
         name="CRS defined on all spatial artifacts",
@@ -198,15 +207,15 @@ def check_missing_crs(named_gdfs: dict[str, gpd.GeoDataFrame]) -> CheckResult:
 
 def check_conus_crs_is_5070(conus_artifacts: dict[str, gpd.GeoDataFrame]) -> CheckResult:
     """CONUS artifacts used for area math must be in EPSG:5070."""
-    wrong = {
-        name: (g.crs.to_epsg() if g.crs is not None else None)
-        for name, g in conus_artifacts.items()
-        if g.crs is None or g.crs.to_epsg() != 5070
-    }
+    wrong = {}
+    for name, g in conus_artifacts.items():
+        crs = _safe_crs(g)
+        if crs is None or crs.to_epsg() != 5070:
+            wrong[name] = crs.to_epsg() if crs is not None else None
     return CheckResult(
         check_id="geo-02",
         name="CONUS artifacts projected in EPSG:5070",
-        dataset="all spatial outputs",
+        dataset="area-math spatial outputs",
         severity=CRITICAL,
         status=_status_for(CRITICAL, len(wrong) == 0),
         details=f"Non-5070 artifacts: {wrong or 'none'}",
@@ -218,6 +227,9 @@ def check_invalid_geometries(named_gdfs: dict[str, gpd.GeoDataFrame]) -> CheckRe
     """No invalid or empty geometries may remain in processed artifacts."""
     report: dict[str, int] = {}
     for name, g in named_gdfs.items():
+        if "geometry" not in g.columns:
+            report[name] = 1  # malformed spatial artifact: no geometry column
+            continue
         invalid = int((~g.geometry.is_valid).sum()) if len(g) else 0
         empty = int(g.geometry.is_empty.sum()) if len(g) else 0
         report[name] = invalid + empty
@@ -230,6 +242,24 @@ def check_invalid_geometries(named_gdfs: dict[str, gpd.GeoDataFrame]) -> CheckRe
         status=_status_for(CRITICAL, total_bad == 0),
         details=f"Invalid+empty per artifact: {report}",
         metrics={"n_bad_total": total_bad},
+    )
+
+
+def check_fires_crs_geographic(fires: gpd.GeoDataFrame) -> CheckResult:
+    """Processed MTBS fires are stored in their native NAD83 geographic CRS
+    (EPSG:4269); all area math reprojects on demand. They must be geographic —
+    an unexpected projected CRS would signal a preprocessing change."""
+    crs = _safe_crs(fires)
+    ok = crs is not None and bool(crs.is_geographic)
+    epsg = crs.to_epsg() if crs is not None else None
+    return CheckResult(
+        check_id="geo-04",
+        name="MTBS fires artifact in a geographic CRS",
+        dataset="mtbs_fires",
+        severity=CRITICAL,
+        status=_status_for(CRITICAL, ok),
+        details=f"fires CRS epsg={epsg}; geographic={ok}",
+        metrics={"epsg": epsg},
     )
 
 
@@ -257,7 +287,7 @@ def check_mtbs_year_range(
 
 def check_missing_fire_id(fires: gpd.GeoDataFrame) -> CheckResult:
     """FIRE_ID is the canonical event key and must be non-null."""
-    n_missing = int(fires["FIRE_ID"].isna().sum())
+    n_missing = int(fires["fire_id"].isna().sum())
     return CheckResult(
         check_id="mtb-02",
         name="No missing FIRE_ID",
@@ -271,8 +301,8 @@ def check_missing_fire_id(fires: gpd.GeoDataFrame) -> CheckResult:
 
 def check_duplicate_fire_id(fires: gpd.GeoDataFrame) -> CheckResult:
     """One row per FIRE_ID after preprocessing."""
-    n, nu = len(fires), fires["FIRE_ID"].nunique()
-    dups = fires[fires["FIRE_ID"].duplicated(keep=False)]["FIRE_ID"].unique().tolist()
+    n, nu = len(fires), fires["fire_id"].nunique()
+    dups = fires[fires["fire_id"].duplicated(keep=False)]["fire_id"].unique().tolist()
     return CheckResult(
         check_id="mtb-03",
         name="FIRE_ID uniqueness after preprocessing",
@@ -418,6 +448,32 @@ def check_footprint_le_cumulative(all_years: pd.DataFrame) -> CheckResult:
         status=_status_for(CRITICAL, len(bad) == 0),
         details=f"{len(bad)} counties where footprint exceeds cumulative area",
         metrics={"n_violations": len(bad)},
+    )
+
+
+def check_footprint_positive_where_fires(all_years: pd.DataFrame) -> CheckResult:
+    """Counties with >=1 fire must have a strictly positive unique footprint.
+
+    A zero (or near-zero) footprint where fires exist is not real geography —
+    it signals a CRS mismatch or overlay bug (e.g. unioning geometries in
+    degree-space against meter-space counties).
+    """
+    with_fires = all_years[all_years["unique_fire_count"] > 0]
+    bad = with_fires[
+        with_fires["unique_historical_burn_footprint_km2"] <= 1e-9
+    ]
+    return CheckResult(
+        check_id="agg-09",
+        name="Footprint > 0 wherever fires occurred",
+        dataset="county_all_years",
+        severity=CRITICAL,
+        status=_status_for(CRITICAL, len(bad) == 0),
+        details=(
+            f"{len(with_fires)} counties with fires; "
+            f"{len(bad)} have zero footprint (bug indicator)"
+            + (f": {bad['GEOID'].tolist()[:10]}" if len(bad) else "")
+        ),
+        metrics={"n_counties_with_fires": len(with_fires), "n_zero_footprint": len(bad)},
     )
 
 
@@ -611,6 +667,13 @@ def main(argv: list[str] | None = None) -> int:
         "mtbs_wildfires_conus": fires,
         "fires_county_intersections": intersections,
     }
+    # Only artifacts used directly for area math are required to be in
+    # EPSG:5070; the fires file is intentionally kept in its native NAD83
+    # geographic CRS (reprojected on demand) and is checked separately.
+    area_math_artifacts = {
+        "counties_conus": counties,
+        "fires_county_intersections": intersections,
+    }
 
     results: list[CheckResult] = [
         check_provenance(PROVENANCE_PATH),
@@ -624,7 +687,8 @@ def main(argv: list[str] | None = None) -> int:
         check_conus_state_coverage(counties, conus_fips),
         check_va_independent_cities(counties),
         check_missing_crs(spatial_artifacts),
-        check_conus_crs_is_5070(spatial_artifacts),
+        check_conus_crs_is_5070(area_math_artifacts),
+        check_fires_crs_geographic(fires),
         check_invalid_geometries(spatial_artifacts),
         check_mtbs_year_range(fires, min_year, max_year),
         check_missing_fire_id(fires),
@@ -636,6 +700,7 @@ def main(argv: list[str] | None = None) -> int:
         check_annual_pct_bounds(county_year),
         check_footprint_pct_bounds(all_years),
         check_footprint_le_cumulative(all_years),
+        check_footprint_positive_where_fires(all_years),
         check_cumulative_vs_county_area(all_years),
         check_count_consistency(county_year, all_years),
         check_intersection_vs_county_area(intersections, counties),

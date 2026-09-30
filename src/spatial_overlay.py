@@ -40,6 +40,25 @@ KM2_PER_M2 = 1e-6
 _POLYGON_TYPES = ("Polygon", "MultiPolygon")
 
 
+def _polygonal(geom) -> object:
+    """Normalize an intersection result to polygonal geometry.
+
+    Polygon/MultiPolygon pass through; GeometryCollections are reduced to
+    their polygonal parts (unioned); lineal/punctual touch artifacts and
+    empties become None (they carry no area).
+    """
+    if geom is None or geom.is_empty:
+        return None
+    t = geom.geom_type
+    if t in _POLYGON_TYPES:
+        return geom
+    if t == "GeometryCollection":
+        parts = shapely.get_parts(geom)
+        poly_parts = [g for g in parts if g.geom_type in _POLYGON_TYPES]
+        return shapely.union_all(poly_parts) if poly_parts else None
+    return None  # Line/Point touch artifact
+
+
 def intersect_fires_counties(
     fires: gpd.GeoDataFrame,
     counties: gpd.GeoDataFrame,
@@ -88,7 +107,10 @@ def intersect_fires_counties(
             counties["geometry"] = counties.geometry.make_valid()
 
     # --- 1) candidate pairs via spatial join ----------------------------
-    fire_cols = ["FIRE_ID", "fire_name", "fire_type", "year", "geometry"]
+    # Input contract: processed fires carry derived lowercase columns
+    # (fire_id, fire_name, fire_type, year); the output table renames the
+    # event key to FIRE_ID, the name used by all county-level products.
+    fire_cols = ["fire_id", "fire_name", "fire_type", "year", "geometry"]
     pairs = gpd.sjoin(
         fires[fire_cols],
         counties[["GEOID", "geometry"]],
@@ -113,18 +135,23 @@ def intersect_fires_counties(
         fire_geom_arr[fire_idx], county_geom_arr[county_idx]
     )
 
-    # Keep only polygonal results (degenerate pairs can yield empty/lineal
-    # outputs when perimeters only touch county boundaries).
-    if hasattr(shapely, "collection_extract"):
-        inter = shapely.collection_extract(inter, [3])  # 3 = polygonal parts
-    area_m2 = shapely.area(inter)
+    # Normalize degenerate outputs: keep polygonal parts, drop zero-area
+    # touch artifacts (boundary-only contacts produce lines/points).
+    inter = np.asarray([_polygonal(g) for g in inter], dtype=object)
+
+    # Drop fragments below the sliver threshold (keep None handling simple:
+    # shapely.area(None) would fail, so mask Nones out first).
+    nonnone = np.array([g is not None for g in inter], dtype=bool)
+    n_degenerate = int(len(inter) - nonnone.sum())
+    if n_degenerate:
+        log.info(
+            "Dropped %d boundary-touch/degenerate intersection results.",
+            n_degenerate,
+        )
+    area_m2 = np.zeros(len(inter), dtype=float)
+    if nonnone.any():
+        area_m2[nonnone] = shapely.area(inter[nonnone])
     keep = (area_m2 * KM2_PER_M2) >= min_intersection_area_km2
-    geom = gpd.GeoSeries(inter, crs=counties.crs)
-    type_ok = geom.geom_type.isin(_POLYGON_TYPES)
-    n_non_polygonal = int((~type_ok & keep).sum())
-    if n_non_polygonal:
-        log.warning("Dropping %d non-polygonal intersection results.", n_non_polygonal)
-    keep = keep & type_ok.to_numpy()
 
     log.info(
         "Kept %d fire-county fragments >= %.6f km2 (dropped %d slivers/touches).",
@@ -133,15 +160,16 @@ def intersect_fires_counties(
         int((~keep).sum()),
     )
 
+    kept_geoms = [g for g, k in zip(inter, keep) if k]
     out = gpd.GeoDataFrame(
         {
             "GEOID": pairs.loc[keep, "GEOID"].to_numpy(),
-            "FIRE_ID": pairs.loc[keep, "FIRE_ID"].to_numpy(),
+            "FIRE_ID": pairs.loc[keep, "fire_id"].to_numpy(),
             "fire_name": pairs.loc[keep, "fire_name"].to_numpy(),
             "fire_type": pairs.loc[keep, "fire_type"].to_numpy(),
             "year": pairs.loc[keep, "year"].to_numpy(),
         },
-        geometry=geom[keep].geometry.values,
+        geometry=kept_geoms,
         crs=counties.crs,
     )
     out["intersection_area_km2"] = (

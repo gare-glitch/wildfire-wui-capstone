@@ -50,7 +50,7 @@ def test_overlay_rejects_geographic_county_crs():
     )
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1"],
+            "fire_id": ["F1"],
             "fire_name": ["X"],
             "fire_type": ["Wildfire"],
             "year": [2000],
@@ -65,7 +65,7 @@ def test_overlay_rejects_geographic_county_crs():
 def test_overlay_rejects_missing_crs():
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1"],
+            "fire_id": ["F1"],
             "fire_name": ["X"],
             "fire_type": ["Wildfire"],
             "year": [2000],
@@ -90,7 +90,7 @@ def test_intersect_fires_counties_basic_math():
     )
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1"],
+            "fire_id": ["F1"],
             "fire_name": ["Border Fire"],
             "fire_type": ["Wildfire"],
             "year": [2005],
@@ -117,7 +117,7 @@ def test_intersect_drops_boundary_touch_slivers():
     )
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1"],
+            "fire_id": ["F1"],
             "fire_name": ["Left Fire"],
             "fire_type": ["Wildfire"],
             "year": [2005],
@@ -146,7 +146,7 @@ def test_intersect_repairs_invalid_geometry_instead_of_failing():
     )
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["B1"],
+            "fire_id": ["B1"],
             "fire_name": ["Bowtie"],
             "fire_type": ["Wildfire"],
             "year": [2005],

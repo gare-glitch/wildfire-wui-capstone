@@ -110,8 +110,24 @@ def compute_footprint_by_county(
 
     Uses full fire perimeters (not the per-county fragments) so the union is
     geometrically identical to dissolving the national fire layer.
+
+    Fires and counties may arrive in different CRSs (processed MTBS is stored
+    in native NAD83 geographic); shapely set operations are CRS-agnostic, so
+    fires are reprojected to the counties CRS before any union/intersection.
     """
-    fire_geom = dict(zip(fires["FIRE_ID"].tolist(), fires.geometry.tolist()))
+    if fires.crs is None:
+        raise ValueError("fires GeoDataFrame has no CRS")
+    if counties.crs is None:
+        raise ValueError("counties GeoDataFrame has no CRS")
+    if str(fires.crs) != str(counties.crs):
+        log.info(
+            "  footprint: reprojecting %d fires from %s to %s",
+            len(fires),
+            fires.crs,
+            counties.crs,
+        )
+        fires = fires.to_crs(counties.crs)
+    fire_geom = dict(zip(fires["fire_id"].tolist(), fires.geometry.tolist()))
     county_geom = dict(zip(counties["GEOID"].tolist(), counties.geometry.tolist()))
     county_area = dict(zip(counties["GEOID"].tolist(), counties["county_area_km2"].tolist()))
     fire_ids_by_geoid = intersections.groupby("GEOID")["FIRE_ID"].unique().to_dict()
@@ -182,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
     log.info(
         "Aggregating %d intersection fragments (%d fires, %d counties).",
         len(intersections),
-        fires["FIRE_ID"].nunique(),
+        fires["fire_id"].nunique(),
         len(counties),
     )
 

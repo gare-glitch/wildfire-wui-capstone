@@ -36,10 +36,11 @@ def make_fires() -> gpd.GeoDataFrame:
     """F1 (2000): x[1,11],y[1,11] -> A:81, B:9
     F2 (2001): x[2,12],y[2,8]  -> A:48, B:12
     F3 (2001): x[0,10],y[0,10] -> A:100 (fully inside A, overlaps F2)
+    Column names follow the processed-fires schema (lowercase derived fields).
     """
     return gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1", "F2", "F3"],
+            "fire_id": ["F1", "F2", "F3"],
             "fire_name": ["Alpha", "Bravo", "Charlie"],
             "fire_type": ["Wildfire"] * 3,
             "year": [2000, 2001, 2001],
@@ -138,7 +139,7 @@ def test_footprint_dedupes_overlapping_fires():
     counties = make_counties()
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["X1", "X2"],
+            "fire_id": ["X1", "X2"],
             "year": [2000, 2005],
             "geometry": [box(1_000, 1_000, 11_000, 11_000)] * 2,
         },
@@ -162,7 +163,7 @@ def test_footprint_partial_overlap_between_max_and_sum():
     # P1: x[1,11],y[1,11] -> A:81, B:9 ; P2: x[0.5,8.5],y[0.5,8.5] -> A:64, B:0
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["P1", "P2"],
+            "fire_id": ["P1", "P2"],
             "year": [2000, 2001],
             "geometry": [
                 box(1_000, 1_000, 11_000, 11_000),
@@ -192,7 +193,7 @@ def test_footprint_never_exceeds_county_area():
     counties = make_counties()
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": [f"Y{i}" for i in range(10)],
+            "fire_id": [f"Y{i}" for i in range(10)],
             "year": [2000 + i for i in range(10)],
             "geometry": [box(0, 0, 10_000, 10_000)] * 10,
         },
@@ -214,6 +215,23 @@ def test_footprint_never_exceeds_county_area():
     assert summary[summary.GEOID == "01001"].iloc[0]["cumulative_burned_area_km2"] == 1000.0
 
 
+def test_footprint_reprojects_mismatched_input_crs():
+    """Regression: fires stored in NAD83 geographic (EPSG:4269, as in the
+    processed MTBS artifact) must be reprojected to the county CRS before the
+    union/intersection. Before the fix, degree-space unions were intersected
+    with meter-space counties, producing ~0 km2 footprints everywhere."""
+    counties = make_counties()  # EPSG:5070
+    fires = make_fires().to_crs("EPSG:4269")  # native MTBS storage CRS
+    inter = make_intersections()
+    fp = bcy.compute_footprint_by_county(fires, inter, counties)
+    a = fp[fp.GEOID == "01001"].iloc[0]
+    # union(F1,F2,F3) within A: F3 covers all of A -> 100 km2
+    assert a["unique_historical_burn_footprint_km2"] == pytest.approx(100.0, rel=1e-3)
+    b = fp[fp.GEOID == "01002"].iloc[0]
+    # union within B: F1 gives x[10,11] (9) plus F2 gives x[10,12] (12) -> 12
+    assert b["unique_historical_burn_footprint_km2"] == pytest.approx(12.0, rel=1e-3)
+
+
 def test_footprint_uses_full_fire_geometry_not_fragments():
     """A county's footprint must include parts of fires that also cover other
     counties — footprint is computed from full perimeters, not fragments."""
@@ -221,7 +239,7 @@ def test_footprint_uses_full_fire_geometry_not_fragments():
     # fire spans the whole A+B strip; B fragment list only has this fire
     fires = gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["S1", "S2"],
+            "fire_id": ["S1", "S2"],
             "year": [2000, 2002],
             "geometry": [
                 box(2_000, 2_000, 12_000, 8_000),   # A:48, B:12
@@ -245,7 +263,7 @@ def test_footprint_uses_full_fire_geometry_not_fragments():
 def test_finalize_summary_zero_fills_counties_without_fires():
     counties = make_counties()
     fires = gpd.GeoDataFrame(
-        {"FIRE_ID": ["Z1"], "year": [2000], "geometry": [box(0, 0, 10_000, 10_000)]},
+        {"fire_id": ["Z1"], "year": [2000], "geometry": [box(0, 0, 10_000, 10_000)]},
         crs=CRS,
     )
     inter = pd.DataFrame(

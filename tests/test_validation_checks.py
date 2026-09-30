@@ -125,7 +125,7 @@ def test_invalid_geometries_detected():
 def _fires():
     return gpd.GeoDataFrame(
         {
-            "FIRE_ID": ["F1", "F2"],
+            "fire_id": ["F1", "F2"],
             "fire_type": ["Wildfire", "Wildland Fire Use"],
             "year": [1984, 2024],
             "geometry": [box(0, 0, 1, 1), box(2, 2, 3, 3)],
@@ -144,8 +144,33 @@ def test_mtbs_year_range():
 def test_missing_fire_id():
     assert vd.check_missing_fire_id(_fires()).status == vd.PASS
     f = _fires()
-    f.loc[0, "FIRE_ID"] = None
+    f.loc[0, "fire_id"] = None
     assert vd.check_missing_fire_id(f).status == vd.FAIL
+
+
+def test_fires_crs_geographic():
+    assert vd.check_fires_crs_geographic(_fires().to_crs("EPSG:4269")).status == vd.PASS
+    assert vd.check_fires_crs_geographic(_fires()).status == vd.FAIL  # projected 5070
+    f = _fires().to_crs("EPSG:4269")
+    f = gpd.GeoDataFrame(f.drop(columns="geometry"))  # strip CRS
+    assert vd.check_fires_crs_geographic(f).status == vd.FAIL
+
+
+def _summary_rows():
+    return pd.DataFrame(
+        {
+            "GEOID": ["01001", "01002"],
+            "unique_fire_count": [3, 0],
+            "unique_historical_burn_footprint_km2": [50.0, 0.0],
+        }
+    )
+
+
+def test_footprint_positive_where_fires():
+    assert vd.check_footprint_positive_where_fires(_summary_rows()).status == vd.PASS
+    bad = _summary_rows()
+    bad.loc[0, "unique_historical_burn_footprint_km2"] = 0.0
+    assert vd.check_footprint_positive_where_fires(bad).status == vd.FAIL
 
 
 def test_duplicate_fire_id():

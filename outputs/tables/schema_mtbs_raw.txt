@@ -1,0 +1,31 @@
+Schema report: mtbs_raw
+======================
+n_features: 30933
+crs: EPSG:4269
+geometry types: {'Polygon': 27555, 'MultiPolygon': 3378}
+total bounds (xmin, ymin, xmax, ymax): [-166.188453, 17.947361, -65.33821, 70.158926]
+
+Columns (name: dtype):
+  event_id: str
+  irwinid: str
+  incid_name: str
+  incid_type: str
+  map_id: int64
+  map_prog: str
+  asmnt_type: str
+  burnbndac: int64
+  burnbndlat: str
+  burnbndlon: str
+  ig_date: str
+  pre_id: str
+  post_id: str
+  perim_id: str
+  dnbr_offst: float64
+  dnbr_stddv: float64
+  nodata_t: float64
+  incgreen_t: float64
+  low_t: int64
+  mod_t: int64
+  high_t: int64
+  comment: str
+  geometry: geometry
