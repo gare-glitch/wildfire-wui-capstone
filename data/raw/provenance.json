@@ -9,7 +9,7 @@
         "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/"
       ],
       "documented_file_name": "tl_2025_us_county.zip",
-      "extraction_dir": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/raw/census_counties/extracted",
+      "extraction_dir": "data/raw/census_counties/extracted",
       "files": {
         "tl_2025_us_county.zip": {
           "archive_members": [
@@ -522,7 +522,7 @@
         "https://burnseverity.cr.usgs.gov/direct-download"
       ],
       "documented_file_name": "mtbs_perimeter_data.zip",
-      "extraction_dir": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/raw/mtbs_perimeter/extracted",
+      "extraction_dir": "data/raw/mtbs_perimeter/extracted",
       "files": {
         "mtbs_perimeter_data.zip": {
           "archive_members": [

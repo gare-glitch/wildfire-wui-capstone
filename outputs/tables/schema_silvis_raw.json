@@ -1,5 +1,5 @@
 {
-  "gdb_path": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/interim/silvis_gdb/CONUS_WUI_block_1990_2020_change_v4_gcs_na83.gdb",
+  "gdb_path": "data/interim/silvis_gdb/CONUS_WUI_block_1990_2020_change_v4_gcs_na83.gdb",
   "layer": "CONUS_WUI_block_1990_2020_change_v4_gcs_na83",
   "n_features": 9158401,
   "crs_wkt": "EPSG:4269",

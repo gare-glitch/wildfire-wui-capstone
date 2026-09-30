@@ -33,7 +33,7 @@ written by `src/download_data.py` at download time). Summary:
 | URL | `geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip` | `zenodo.org/api/records/7941460/files/NA.zip/content` (DOI 10.5281/zenodo.7941460) | `www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_{STATEFP}_place.zip` |
 | Version / release | v4, released 2023-08-10 (SILVIS page updated Feb 2025) | v1.1 (2023-04-01); paper DOI 10.1038/s41586-023-06320-0 | TIGER 2025 (boundaries as of 2025-01-01) |
 | Format | Zipped Esri File Geodatabase (polygon layer `CONUS_WUI_block_1990_2020_change_v4_gcs_na83` (name verified by inspection)) | Zipped 10 m GeoTIFF EQUI7 tiles (100 km × 100 km) + GDAL VRT | Zipped ESRI polygon shapefiles (49 state files) |
-| CRS | NAD83 geographic (EPSG:4269) | EQUI7 equal-area projection (per-tile; pixel counts × pixel area give areas directly) | NAD83 geographic (EPSG:4269) |
+| CRS | NAD83 geographic (EPSG:4269) | EQUI7 North America, EPSG:27705 (azimuthal equidistant, not equal-area). Nominal 10 m pixels are 100 m² on the map; ground area uses the EPSG:5070 correction in §7 | NAD83 geographic (EPSG:4269) |
 | Units of analysis | 2020 census blocks (uniform housing/land-cover areas) | 10 m pixels | Place polygons (STATEFP+PLACEFP) |
 | Coverage | CONUS only (48 states + DC) | Global; NA.zip = North America; clipped to CONUS | CONUS states + DC |
 | Temporal content | WUI classes for 1990, 2000, 2010, 2020; housing 1990–2020; vegetation from NLCD 1992/2001/2011/2019 | Approximately 2020 conditions | 2025 boundaries (see §8 limitation) |
@@ -269,13 +269,19 @@ Stage 2 deliberately does not attempt.
   (county × class) histogram accumulates pixel counts; progress checkpoints
   to `data/interim/nature_county_class_pixels.json` every 25 tiles so the step
   is resumable.
-- Areas come from **pixel counts × pixel area** (10 m EQUI7 equal-area
-  projection, so counts are exact area integrals — no reprojection
-  resampling error).
+- Areas start as **pixel counts × the nominal 10 m × 10 m cell** (100 m²
+  on the EQUI7 map). EPSG:27705 is azimuthal equidistant, centered at 52°N,
+  97.5°W, so that nominal cell is not exact ground area. Across CONUS the
+  county polygon's area in EPSG:5070 divided by its area in EPSG:27705 is
+  about 0.956–0.999 (median 0.985): nominal pixels overstate ground area.
+  `nature_*_area_km2` keeps the nominal measurement.
+  `nature_*_ground_km2` multiplies it by that county-level scale
+  (`equi7_ground_over_nominal`). Nominal values are not clipped.
 - County output `county_nature_wui_2020.{parquet,csv}`:
   `nature_wui_area_km2`, `nature_interface/intermix_wui_area_km2`
   (classes: intermix = 1,3; interface = 2,4), per-class areas for all 8
-  classes, `nature_classified_area_km2`, `pct_county_nature_wui`,
+  classes, `nature_classified_area_km2`, the ground-corrected companions
+  above, `pct_county_nature_wui`,
   `pct_of_nature_wui_that_is_interface/intermix`,
   `pct_county_covered_by_nature_raster`.
 

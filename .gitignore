@@ -42,6 +42,10 @@ data/processed/**
 outputs/logs/**
 !outputs/logs/.gitkeep
 
+# Scratch diagnostics under outputs/tables (underscore prefix). Named
+# pipeline products are not written this way.
+outputs/tables/_*.parquet
+
 # Secrets / credentials — never commit
 .env
 .env.*
