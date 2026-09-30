@@ -1,5 +1,11 @@
 # Stage 1 Methodology — MTBS Wildfire × U.S. County Spatial Database
 
+> **Stage 2:** the WUI exposure methodology lives in
+> [`docs/wui_methodology.md`](wui_methodology.md) (SILVIS decadal WUI,
+> temporal alignment, fire × WUI × county intersection, Nature 2020
+> sensitivity product, Census Places). This document covers Stage 1 only;
+> Stage 1 outputs are consumed unchanged by Stage 2.
+
 This document records every material methodological choice for Stage 1, with
 justifications, so results are interpretable and reproducible. Companion
 documents: [`data_sources.md`](data_sources.md) (what was downloaded, from
@@ -72,9 +78,17 @@ centroid coordinates (AK centroids lon ≤ −140.7; HI lon ≤ −155.1; PR lon
   EPSG:5070. It is cross-checked against the published `ALAND + AWATER`
   attributes; small differences reflect TIGER line generalization and are
   logged, not "corrected".
+- `county_land_area_km2` = Census `ALAND / 1e6` and `county_water_area_km2`
+  = `AWATER / 1e6` are stored beside it. They are not a replacement.
+  `pct_county_wui` (alias `pct_total_county_area_wui`) uses the legal polygon.
+  `pct_county_land_area_wui` uses ALAND. For WUI exposure, the land-area
+  percentage is the better denominator: water is not WUI, so a legal-polygon
+  percentage understates the share of land that is interface or intermix in
+  coastal and Great Lakes counties. The legal-polygon percentage remains the
+  right denominator for "share of the county jurisdiction."
 - Consequence (documented caveat): for coastal and Great Lakes counties,
-  `county_area_km2` exceeds land area, so burn percentages are conservative
-  relative to a land-only denominator.
+  `county_area_km2` exceeds land area, so burn percentages that use it are
+  conservative relative to a land-only denominator.
 
 ## 6. Geometric intersection procedure
 
@@ -189,6 +203,14 @@ than clipping — and treats *negative* percentages as critical failures.
    Wildfire.
 9. MTBS is a *mapping* program, not a fire-occurrence census: counts reflect
    mapped, qualifying incidents.
+10. **`county_year_wui_fire` is not a complete county × year panel.** It has
+    one row per county-year in which Stage 1 recorded at least one qualifying
+    MTBS wildfire (9,671 rows; 1,408 counties; 1984–2024). County-years with
+    zero qualifying fires are absent, not stored as zeros. That is the Stage 2
+    spatial product. A later predictive model must build an explicit balanced
+    panel (every CONUS county × every analysis year) and fill true structural
+    zeros for fire outcomes. Do not fill WUI-exposure nulls on 1984–1989 rows
+    with zero: those nulls mean no WUI vintage exists, not "zero WUI burned."
 
 ## 11. Reproducibility
 

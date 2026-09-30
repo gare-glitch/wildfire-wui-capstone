@@ -1,0 +1,8 @@
+Schug et al. 2023 Nature global WUI (NA tiles) — observed schema
+============================================================
+mosaic:            1110000x900000 px @ 10 m
+tiles (total):     3157
+tiles (processed): 929
+pixel area:        9.999999999999999e-05 km2
+observed classes:  [0, 1, 2, 3, 4, 5, 6, 7, 8]
+CRS (WKT):         PROJCS["Azimuthal_Equidistant",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Azimuthal_E

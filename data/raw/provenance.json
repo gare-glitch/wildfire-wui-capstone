@@ -1,15 +1,6 @@
 {
   "datasets": {
     "census_counties": {
-      "archive_members": [
-        "tl_2025_us_county.cpg",
-        "tl_2025_us_county.dbf",
-        "tl_2025_us_county.prj",
-        "tl_2025_us_county.shp",
-        "tl_2025_us_county.shp.ea.iso.xml",
-        "tl_2025_us_county.shp.iso.xml",
-        "tl_2025_us_county.shx"
-      ],
       "archive_valid": true,
       "boundaries_as_of": "2025-01-01",
       "display_name": "2025 TIGER/Line Shapefile: U.S. Counties and County Equivalents (national file)",
@@ -19,28 +10,510 @@
       ],
       "documented_file_name": "tl_2025_us_county.zip",
       "extraction_dir": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/raw/census_counties/extracted",
-      "http_content_length": "83989800",
-      "http_content_type": "application/zip",
-      "http_last_modified": "Tue, 23 Sep 2025 02:15:55 GMT",
-      "http_status": 200,
+      "files": {
+        "tl_2025_us_county.zip": {
+          "archive_members": [
+            "tl_2025_us_county.cpg",
+            "tl_2025_us_county.dbf",
+            "tl_2025_us_county.prj",
+            "tl_2025_us_county.shp",
+            "tl_2025_us_county.shp.ea.iso.xml",
+            "tl_2025_us_county.shp.iso.xml",
+            "tl_2025_us_county.shx"
+          ],
+          "archive_valid": true,
+          "file_name": "tl_2025_us_county.zip",
+          "retrieval_utc": "2026-09-30T09:46:49Z",
+          "sha256": "9c6e9d9076abce2670d1de255de3710c35ecca00a7005d88e012dec52d95f763",
+          "size_bytes": 83989800,
+          "status": "downloaded",
+          "upstream": {
+            "http_content_length": "83989800",
+            "http_content_type": "application/zip",
+            "http_last_modified": "Tue, 23 Sep 2025 02:15:55 GMT",
+            "http_status": 200
+          },
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip"
+        }
+      },
+      "n_files": 1,
       "provider": "U.S. Census Bureau",
       "release_date": "2025-09-23",
       "renewal": "Annual release (next: TIGER 2026, typically mid/late September 2026)",
-      "retrieval_utc": "2026-09-30T05:30:57Z",
+      "retrieval_utc": "2026-09-30T09:46:49Z",
       "sha256": "9c6e9d9076abce2670d1de255de3710c35ecca00a7005d88e012dec52d95f763",
       "size_bytes": 83989800,
       "status": "downloaded",
       "url": "https://www2.census.gov/geo/tiger/TIGER2025/COUNTY/tl_2025_us_county.zip"
     },
-    "mtbs_perimeter": {
-      "archive_members": [
-        "mtbs_perims_DD.shp",
-        "mtbs_perims_DD.shx",
-        "mtbs_perims_DD.dbf",
-        "mtbs_perims_DD.cpg",
-        "mtbs_perims_DD.prj",
-        "mtbs_perims_DD_metadata.xml"
+    "census_places": {
+      "archive_valid": true,
+      "boundaries_as_of": "2025-01-01",
+      "display_name": "2025 TIGER/Line Shapefiles: Places (state files, CONUS subset)",
+      "documentation_urls": [
+        "https://www.census.gov/geographies/mapping-files/2025/geo/tiger-line-file.html",
+        "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/"
       ],
+      "documented_file_name": null,
+      "files": {
+        "tl_2025_01_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_01_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:18Z",
+          "sha256": "502d0e2e0266e4e73a00582b5b82252e4484f6cac61c0dbe7df85d9f5a30a144",
+          "size_bytes": 5250692,
+          "status": "cached",
+          "upstream": {
+            "http_content_length": "5250692",
+            "http_content_type": "application/zip",
+            "http_last_modified": "Mon, 22 Sep 2025 23:49:09 GMT",
+            "http_status": 200
+          },
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_01_place.zip"
+        },
+        "tl_2025_04_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_04_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "7c52a87725285cd6e6655daf6cf733c37942256bc7e190ac01ddb174a0acd330",
+          "size_bytes": 2821601,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_04_place.zip"
+        },
+        "tl_2025_05_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_05_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "348061c5f3cac0d83394ac7c1cfb0bff9ba891061429aa46d8abbdec83092999",
+          "size_bytes": 2444799,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_05_place.zip"
+        },
+        "tl_2025_06_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_06_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "2b59dc5d54c69c7a451795401fc2a1c1c68b172f1d912d3486080e04a83e23e8",
+          "size_bytes": 9885068,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_06_place.zip"
+        },
+        "tl_2025_08_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_08_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "e0072e2f1c049e53d598119014e6bc93f82a0a02082b3604d81b0a8c3e8b043c",
+          "size_bytes": 2791333,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_08_place.zip"
+        },
+        "tl_2025_09_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_09_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "5766992fb77774fd47a2b7868747b6007a5cbbdeaa04e793506aee3faa13d52e",
+          "size_bytes": 886904,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_09_place.zip"
+        },
+        "tl_2025_10_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_10_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "638eda256e3785b8653ec776787866e6eda890a9d9bf2653c6fcc6aeba6cebb8",
+          "size_bytes": 454114,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_10_place.zip"
+        },
+        "tl_2025_11_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_11_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "1ac8c0230c3e656bf79d9ee3a52f4d48f97626fce5e4f6c7701bca6f948b9623",
+          "size_bytes": 86364,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_11_place.zip"
+        },
+        "tl_2025_12_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_12_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "4394a80089284477cf79daefb754afd7e9f90683415d3398376e5c2152960876",
+          "size_bytes": 7068141,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_12_place.zip"
+        },
+        "tl_2025_13_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_13_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "85af23730c518c008e6869ce63dfa02d17ae61de601dd204b880ff43f5d31ff5",
+          "size_bytes": 5220272,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_13_place.zip"
+        },
+        "tl_2025_16_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_16_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "d0202acb86094eab323a1cd2deef23e12b4fa9e29d8d77bcfabb862235f847d4",
+          "size_bytes": 1052099,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_16_place.zip"
+        },
+        "tl_2025_17_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_17_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "5c2ce6d7ca6a5045ea46563898c168a6e6b259d7ad116c6f27148ce3a40822b3",
+          "size_bytes": 6140463,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_17_place.zip"
+        },
+        "tl_2025_18_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_18_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "2428563ed4db0a74b2041dec577e4230103329eb2875ac1827076bf477f82201",
+          "size_bytes": 2425860,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_18_place.zip"
+        },
+        "tl_2025_19_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_19_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "b945d74f84c7fd20d1e77cd49522cc1ea542f16652987171b10616f15875ce21",
+          "size_bytes": 1895750,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_19_place.zip"
+        },
+        "tl_2025_20_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_20_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "0cdaf30d567ebbb8f75421200a6e3345728313cffd791567cce308fdac047583",
+          "size_bytes": 1675287,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_20_place.zip"
+        },
+        "tl_2025_21_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_21_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "40d09b3263922786f5970b7e55dfb8e7b1a97c74a62efacab4e070e8738e9e64",
+          "size_bytes": 2768605,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_21_place.zip"
+        },
+        "tl_2025_22_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_22_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "982330b7333d268b26ff60666b3ad4b683b95a1db7cef9053d39bfb580c6dcfd",
+          "size_bytes": 1948019,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_22_place.zip"
+        },
+        "tl_2025_23_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_23_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "2bc5461577f18dd3e89ac5d314c0ce2fc8def3de3a3f633a35423488a8aa0ce5",
+          "size_bytes": 682536,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_23_place.zip"
+        },
+        "tl_2025_24_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_24_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "e984dd58cc06b01363958221a661e1eef89b3daa328ace515f1daee0da4594cc",
+          "size_bytes": 2730658,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_24_place.zip"
+        },
+        "tl_2025_25_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_25_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "950f7d0a669caf721f770d1cc58883560b1cf84f5d7be845e6e3d05a855c86fa",
+          "size_bytes": 1191390,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_25_place.zip"
+        },
+        "tl_2025_26_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_26_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "91cd708b8f9809a50ebed360fe7242969ba357a542481da81d9edc5821d35d3b",
+          "size_bytes": 1484329,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_26_place.zip"
+        },
+        "tl_2025_27_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_27_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "60d7e34ecbf7bf225b4b29d908acddcd6a9e05c39ae505cdb83791e3dfd81873",
+          "size_bytes": 2556050,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_27_place.zip"
+        },
+        "tl_2025_28_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_28_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "08aa0b23ab4d88f3dac2891fd82c2f6a67ea90816c14111c0147de85dae5f3e7",
+          "size_bytes": 1510851,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_28_place.zip"
+        },
+        "tl_2025_29_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_29_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "7182d92a73ef3167714d66ef192fce374636c549fb1d4e635af9580dc49cddf1",
+          "size_bytes": 3082129,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_29_place.zip"
+        },
+        "tl_2025_30_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_30_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "2a39433bd9e5a81a683e39ae9bbb914c9ce63c50a92855ddeee8c0ae02b63f74",
+          "size_bytes": 2262510,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_30_place.zip"
+        },
+        "tl_2025_31_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_31_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "aa01fa8c3dafcea27cbe6bd009f38eb774b4c765fd2e5b81701d69a534da16e0",
+          "size_bytes": 826250,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_31_place.zip"
+        },
+        "tl_2025_32_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_32_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "9842a490c27930be50f19cbc21b0c623f16b6d1d40f2e4cb1b0b2b5c7b2f7d83",
+          "size_bytes": 848456,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_32_place.zip"
+        },
+        "tl_2025_33_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_33_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "e5ccfa3bcca3899566dc5d4831ba3557779f53856bedffde393f824d0bcc44c7",
+          "size_bytes": 379207,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_33_place.zip"
+        },
+        "tl_2025_34_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_34_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:19Z",
+          "sha256": "28602a4302564a9eecf8e92f861fad6864d806581ee2ce8bea9997999f3e440e",
+          "size_bytes": 2939779,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_34_place.zip"
+        },
+        "tl_2025_35_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_35_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "1cbbc3121c3aeb65c2eaa4371d30ceab09a7a6f4f066beee0a9f76077c42348e",
+          "size_bytes": 2368303,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_35_place.zip"
+        },
+        "tl_2025_36_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_36_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "4f667ef3a40f1569b58a37052e2464053436bd5e978b34ca333e8185a6a6808d",
+          "size_bytes": 3380697,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_36_place.zip"
+        },
+        "tl_2025_37_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_37_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "c6b8dabd4c953bb44dd4201b34eae83dceeb880055e1c4efd00faa43c272ea79",
+          "size_bytes": 8497219,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_37_place.zip"
+        },
+        "tl_2025_38_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_38_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "bec89e2ff577b0717d31d58c33bcc54b36732822f6de8c32ccfd966f0527cea9",
+          "size_bytes": 537253,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_38_place.zip"
+        },
+        "tl_2025_39_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_39_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "6c4c280e539dadc21bedda385b1c7a4b3ee24998c774d1b7e0a49e0199b272e9",
+          "size_bytes": 4069844,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_39_place.zip"
+        },
+        "tl_2025_40_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_40_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "e9d840ae15b4c3e194427987a31f84ed685fe9d82ac8d3349986a99b18e365cb",
+          "size_bytes": 2971163,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_40_place.zip"
+        },
+        "tl_2025_41_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_41_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "d05814de06701cca35df9e160017cd11d5ffe43a2530a8fa7f4b3a521e9e1f0f",
+          "size_bytes": 2364412,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_41_place.zip"
+        },
+        "tl_2025_42_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_42_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "b9b8a25b906bc0c338cc4cfea45d8e5de12247a913cbd821b93368c55e2e9dc5",
+          "size_bytes": 4590506,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_42_place.zip"
+        },
+        "tl_2025_44_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_44_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "520647e2008a90b0f8f68ec9eefb40f929b77debc5561db3132ed3decb8d3429",
+          "size_bytes": 292174,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_44_place.zip"
+        },
+        "tl_2025_45_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_45_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "f1a69f4a169b19ca69d09da21e157dfd6177c0959bec80352b0a7a0165885d68",
+          "size_bytes": 5279552,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_45_place.zip"
+        },
+        "tl_2025_46_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_46_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "050183397bec5bef01804ccd9f3ba4ec7d3f80edd27603a71160959af4fad0ef",
+          "size_bytes": 817119,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_46_place.zip"
+        },
+        "tl_2025_47_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_47_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "3f6d5ae04e8f1217a7d0be244d3a841345902d9d4def83b0a07d1fc75960cc8e",
+          "size_bytes": 5051239,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_47_place.zip"
+        },
+        "tl_2025_48_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_48_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "5a0c4d49641f69028ee9f5c343bf09936ec00a378e5e6393115b106bab935e13",
+          "size_bytes": 9782040,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_48_place.zip"
+        },
+        "tl_2025_49_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_49_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "3db4d3fc1d9ca4b7c6911b01079558bb13e89703933858247f0bc4ff75d9e3d9",
+          "size_bytes": 1652963,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_49_place.zip"
+        },
+        "tl_2025_50_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_50_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "6b932d7ab2aa279cac6e2ec713e0283d71f88661396df1630d85dc8eef5f58f5",
+          "size_bytes": 596853,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_50_place.zip"
+        },
+        "tl_2025_51_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_51_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "b2ce73226f4b3a0f0a60d7116e65f468cd94a739f30c345106ff1e292c57a1f5",
+          "size_bytes": 3860419,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_51_place.zip"
+        },
+        "tl_2025_53_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_53_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "b99039759e33cf931175302da80de9bd8d284c384721d52efde34dfbef2b64f5",
+          "size_bytes": 2855604,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_53_place.zip"
+        },
+        "tl_2025_54_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_54_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "756188b7c2187c2e7cb43867546e406e3236df360b0baa72b17db4af0fd4ecd2",
+          "size_bytes": 1642581,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_54_place.zip"
+        },
+        "tl_2025_55_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_55_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "a48a36cae9450fe11916cb94bbf1054d0ebc6c878e18de7a7e27039ad6fc5763",
+          "size_bytes": 3482721,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_55_place.zip"
+        },
+        "tl_2025_56_place.zip": {
+          "archive_valid": true,
+          "file_name": "tl_2025_56_place.zip",
+          "retrieval_utc": "2026-09-30T14:03:20Z",
+          "sha256": "3b077402b1090f9afed9662da7f70d66b791b01f61d8ac4b7032df2293715e96",
+          "size_bytes": 904349,
+          "status": "cached",
+          "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_56_place.zip"
+        }
+      },
+      "n_files": 49,
+      "provider": "U.S. Census Bureau",
+      "renewal": "Annual release",
+      "retrieval_utc": "2026-09-30T14:03:20Z",
+      "sha256": "502d0e2e0266e4e73a00582b5b82252e4484f6cac61c0dbe7df85d9f5a30a144",
+      "size_bytes": 5250692,
+      "status": "cached",
+      "url": "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_01_place.zip"
+    },
+    "mtbs_perimeter": {
       "archive_valid": true,
       "display_name": "MTBS Burned Area Boundaries (national fire perimeter dataset)",
       "documentation_urls": [
@@ -50,18 +523,128 @@
       ],
       "documented_file_name": "mtbs_perimeter_data.zip",
       "extraction_dir": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/raw/mtbs_perimeter/extracted",
-      "http_content_length": "389976591",
-      "http_content_type": "application/zip",
-      "http_last_modified": "Wed, 30 Sep 2026 05:08:03 GMT",
-      "http_status": 200,
+      "files": {
+        "mtbs_perimeter_data.zip": {
+          "archive_members": [
+            "mtbs_perims_DD.shp",
+            "mtbs_perims_DD.shx",
+            "mtbs_perims_DD.dbf",
+            "mtbs_perims_DD.cpg",
+            "mtbs_perims_DD.prj",
+            "mtbs_perims_DD_metadata.xml"
+          ],
+          "archive_valid": true,
+          "file_name": "mtbs_perimeter_data.zip",
+          "retrieval_utc": "2026-09-30T09:46:42Z",
+          "sha256": "4b331fcee0dc4908d481f38b1a6fca1b12f0ae250a60cac656ca7d2556e5515f",
+          "size_bytes": 389976591,
+          "status": "downloaded",
+          "upstream": {
+            "http_content_length": "389976591",
+            "http_content_type": "application/zip",
+            "http_last_modified": "Wed, 30 Sep 2026 05:08:03 GMT",
+            "http_status": 200
+          },
+          "url": "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
+        }
+      },
+      "n_files": 1,
       "provider": "Monitoring Trends in Burn Severity (MTBS) \u2014 USGS Earth Resources Observation and Science (EROS) Center & USDA Forest Service",
       "renewal": "Quarterly releases (national composite archive is refreshed in place)",
-      "retrieval_utc": "2026-09-30T05:30:00Z",
+      "retrieval_utc": "2026-09-30T09:46:42Z",
       "sha256": "4b331fcee0dc4908d481f38b1a6fca1b12f0ae250a60cac656ca7d2556e5515f",
       "size_bytes": 389976591,
       "status": "downloaded",
       "url": "https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/MTBS_Fire/data/composite_data/burned_area_extent_shapefile/mtbs_perimeter_data.zip"
+    },
+    "nature_wui": {
+      "archive_valid": true,
+      "class_domain": "1 forest/shrubland/wetland intermix WUI; 2 forest/shrubland/wetland interface WUI; 3 grassland intermix WUI; 4 grassland interface WUI; 5 non-WUI forest/shrub/wetland; 6 non-WUI grassland; 7 non-WUI urban; 8 non-WUI other.",
+      "display_name": "Map of the global wildland-urban interface (Schug et al. 2023, version 1.1) \u2014 North America tiles",
+      "documentation_urls": [
+        "https://zenodo.org/records/7941460",
+        "https://www.nature.com/articles/s41586-023-06320-0",
+        "https://geoserver.silvis.forest.wisc.edu/geodata/globalwui",
+        "https://github.com/franzschug/global_wildland_urban_interface"
+      ],
+      "documented_file_name": "NA.zip",
+      "doi": "10.5281/zenodo.7941460",
+      "files": {
+        "NA.zip": {
+          "archive_valid": true,
+          "file_name": "NA.zip",
+          "retrieval_utc": "2026-09-30T14:03:10Z",
+          "sha256": "63a13e12c4fcf415c9c42fc5ed27848f80f6af87bf8b0c0b3f22baa035077f28",
+          "size_bytes": 4066844705,
+          "status": "cached",
+          "upstream": {
+            "http_content_length": "4066844705",
+            "http_content_type": "application/octet-stream",
+            "http_last_modified": "Thu, 22 Jan 2026 07:36:57 GMT",
+            "http_status": 200
+          },
+          "url": "https://zenodo.org/api/records/7941460/files/NA.zip/content"
+        },
+        "tabular_script_meta_data.zip": {
+          "archive_valid": true,
+          "file_name": "tabular_script_meta_data.zip",
+          "retrieval_utc": "2026-09-30T14:03:18Z",
+          "sha256": "0c8681f59bc0a587b1531f5ee0172c49ac23337389bed01428f6b37fcda65c9d",
+          "size_bytes": 17109023,
+          "status": "cached",
+          "url": "https://zenodo.org/api/records/7941460/files/tabular_script_meta_data.zip/content"
+        }
+      },
+      "n_files": 2,
+      "paper_doi": "10.1038/s41586-023-06320-0",
+      "provider": "SILVIS Lab, University of Wisconsin-Madison / Humboldt-University Berlin, published via Zenodo",
+      "release_date": "2023-04-01 (version 1.1; version 1.0 DOI 10.5281/zenodo.7791980)",
+      "renewal": "Version 1.1 is the published record version",
+      "retrieval_utc": "2026-09-30T14:03:18Z",
+      "sha256": "63a13e12c4fcf415c9c42fc5ed27848f80f6af87bf8b0c0b3f22baa035077f28",
+      "size_bytes": 4066844705,
+      "status": "cached",
+      "url": "https://zenodo.org/api/records/7941460/files/NA.zip/content"
+    },
+    "silvis_wui": {
+      "archive_valid": true,
+      "crs_note": "Distributed in NAD83 geographic coordinates (GCS_North_American_1983, EPSG:4269); the embedded Esri Shape_Area field is in square degrees and is unusable for area math \u2014 all areas are recomputed in EPSG:5070.",
+      "display_name": "SILVIS U.S. Wildland-Urban Interface (WUI) Change 1990-2020 (version 4)",
+      "documentation_urls": [
+        "https://silvis.forest.wisc.edu/data/wui-change/",
+        "https://www.fs.usda.gov/rds/archive/products/RDS-2015-0012-4/_metadata_RDS-2015-0012-4.html",
+        "https://geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_FGDC_MetadataUpdate.html"
+      ],
+      "documented_file_name": "CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip",
+      "files": {
+        "CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip": {
+          "archive_valid": true,
+          "file_name": "CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip",
+          "retrieval_utc": "2026-09-30T14:02:16Z",
+          "sha256": "0b3d1bfabd80fdc75a3e776c26f8708ac5a55ab43b7f87b081d69e413fe447d4",
+          "size_bytes": 4300350918,
+          "status": "cached",
+          "upstream": {
+            "http_content_length": "4300350918",
+            "http_content_type": "application/zip",
+            "http_last_modified": "Thu, 10 Aug 2023 16:36:51 GMT",
+            "http_status": 200
+          },
+          "url": "https://geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip"
+        }
+      },
+      "layer_name": "CONUS_WUI_block_1990_2020_change_v4_gcs_na83",
+      "methodology_citation": "Radeloff, V.C., Helmers, D.P., Kramer, H.A., Mockrin, M.H., Alexandre, P.M., Bar-Massada, A., ... Stewart, S.I. (2018) \"Rapid growth of the US wildland-urban interface raises wildfire risk.\" PNAS 115(13). WUI mapped per the Federal Register definition (66 FR 751, 2001): intermix = >50% wildland vegetation and >=6.177635 housing units/km2; interface = <=50% vegetation housing areas within 2.414 km of contiguous vegetation areas >=75% wildland vegetation (>=500 ha).",
+      "n_files": 1,
+      "provider": "SILVIS Lab, Department of Forest & Wildlife Ecology, University of Wisconsin-Madison (also archived as USDA Forest Service Research Data Archive product RDS-2015-0012-4, DOI 10.2737/RDS-2015-0012-4)",
+      "release_date": "2023-08-10 (v4; SILVIS page last updated February 2025)",
+      "renewal": "As needed (v4 is the current version; SILVIS updates the product page)",
+      "retrieval_utc": "2026-09-30T14:02:25Z",
+      "sha256": "0b3d1bfabd80fdc75a3e776c26f8708ac5a55ab43b7f87b081d69e413fe447d4",
+      "size_bytes": 4300350918,
+      "status": "cached",
+      "url": "https://geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip"
     }
   },
-  "generated_utc": "2026-09-30T05:31:08Z"
+  "generated_utc": "2026-09-30T14:03:20Z"
 }

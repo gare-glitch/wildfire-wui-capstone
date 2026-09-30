@@ -1,4 +1,6 @@
-# Virtual environments
+# Virtual environments (.venv is a symlink to a venv stored outside the
+# repo/iCloud; a trailing slash would not match a symlink)
+.venv
 .venv/
 venv/
 env/
@@ -19,12 +21,12 @@ htmlcov/
 # provenance manifest ARE committed.
 data/raw/mtbs_perimeter/**
 data/raw/census_counties/**
-data/raw/silvis/**
+data/raw/silvis_wui/**
 data/raw/nature_wui/**
 data/raw/census_places/**
 !data/raw/mtbs_perimeter/.gitkeep
 !data/raw/census_counties/.gitkeep
-!data/raw/silvis/.gitkeep
+!data/raw/silvis_wui/.gitkeep
 !data/raw/nature_wui/.gitkeep
 !data/raw/census_places/.gitkeep
 data/raw/*.zip
@@ -48,6 +50,9 @@ outputs/logs/**
 *credentials*
 *secret*
 secrets/
+
+# Optional per-clone data-root override (may expand $HOME; never commit)
+.data_root
 
 # OS
 .DS_Store

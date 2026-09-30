@@ -41,6 +41,7 @@ from common import (  # noqa: E402
     ensure_dirs,
     get_logger,
     load_analysis_config,
+    resolve_stored_path,
 )
 
 log = get_logger("preprocess_mtbs")
@@ -60,14 +61,28 @@ NON_CONUS_STATE_PREFIXES = {"AK", "HI", "PR"}
 
 
 def find_raw_shapefile() -> Path:
-    """Locate the extracted MTBS shapefile via the provenance manifest."""
+    """Locate the extracted MTBS shapefile.
+
+    Primary path: the provenance manifest's extraction_dir (written by the
+    download stage). Fallback: the standard extraction location under
+    data/raw/mtbs_perimeter/extracted/, used when a prior download failure
+    left no extraction record but a valid archive + extraction exist.
+    """
+    shp_dir: Path | None = None
     prov = RAW_DIR / "provenance.json"
-    with open(prov, "r", encoding="utf-8") as fh:
-        extraction_dir = json.load(fh)["datasets"]["mtbs_perimeter"]["extraction_dir"]
-    shp_dir = Path(extraction_dir)
+    if prov.exists():
+        with open(prov, "r", encoding="utf-8") as fh:
+            rec = json.load(fh).get("datasets", {}).get("mtbs_perimeter", {})
+        if rec.get("extraction_dir"):
+            shp_dir = resolve_stored_path(rec["extraction_dir"])
+    if shp_dir is None or not shp_dir.exists():
+        shp_dir = RAW_DIR / "mtbs_perimeter" / "extracted"
     shps = sorted(shp_dir.glob("*.shp"))
     if len(shps) != 1:
-        raise FileNotFoundError(f"Expected exactly one .shp in {shp_dir}, found {shps}")
+        raise FileNotFoundError(
+            f"Expected exactly one .shp in {shp_dir}, found {shps}. "
+            "Run the download stage first."
+        )
     return shps[0]
 
 

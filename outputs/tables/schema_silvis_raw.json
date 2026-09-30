@@ -1,0 +1,163 @@
+{
+  "gdb_path": "/Users/garrettuthlaut/Documents/wildfire-wui-capstone/data/interim/silvis_gdb/CONUS_WUI_block_1990_2020_change_v4_gcs_na83.gdb",
+  "layer": "CONUS_WUI_block_1990_2020_change_v4_gcs_na83",
+  "n_features": 9158401,
+  "crs_wkt": "EPSG:4269",
+  "crs_epsg": 4269,
+  "fields": {
+    "BLK20": "object",
+    "WATER20": "int16",
+    "AWATER20PC": "float64",
+    "POP2020": "int32",
+    "HU2020": "int32",
+    "OCCHU2020": "int32",
+    "VACHU2020": "int32",
+    "POPDEN2020": "float64",
+    "HUDEN2020": "float64",
+    "OCCHUDEN2020": "float64",
+    "VACHUDEN2020": "float64",
+    "PUBFLAG": "int32",
+    "STATE": "object",
+    "HU1990": "int32",
+    "HU2000": "int32",
+    "HU2010": "int32",
+    "HUDEN1990": "float64",
+    "HUDEN2000": "float64",
+    "HUDEN2010": "float64",
+    "VEG1992PC": "float64",
+    "VEG2001PC": "float64",
+    "VEG2011PC": "float64",
+    "VEG2019PC": "float64",
+    "WUIFLAG1990": "int32",
+    "WUICLASS1990": "object",
+    "WUIFLAG2000": "int32",
+    "WUICLASS2000": "object",
+    "WUIFLAG2010": "int32",
+    "WUICLASS2010": "object",
+    "WUIFLAG2020": "int32",
+    "WUICLASS2020": "object",
+    "BUFVEG": "int16",
+    "fips": "object",
+    "Shape_Length": "float64",
+    "Shape_Area": "float64"
+  },
+  "required_fields_missing": [],
+  "n_rows_scanned": 9158401,
+  "observed_domains": {
+    "1990": {
+      "flag": {
+        "0": 7269987,
+        "2": 1147141,
+        "1": 741273
+      },
+      "class": {
+        "Uninhabited_NoVeg": 1522193,
+        "High_Dens_NoVeg": 1196957,
+        "Uninhabited_Veg": 1016396,
+        "Med_Dens_NoVeg": 1225634,
+        "Water": 934737,
+        "Med_Dens_Interface": 644036,
+        "Very_Low_Dens_Veg": 448750,
+        "Low_Dens_Intermix": 441685,
+        "Med_Dens_Intermix": 285310,
+        "Very_Low_Dens_NoVeg": 581033,
+        "Low_Dens_NoVeg": 344287,
+        "High_Dens_Interface": 307950,
+        "Low_Dens_Interface": 195155,
+        "High_Dens_Intermix": 14278
+      }
+    },
+    "2000": {
+      "flag": {
+        "0": 7203741,
+        "2": 1279828,
+        "1": 674832
+      },
+      "class": {
+        "Uninhabited_NoVeg": 1493619,
+        "High_Dens_NoVeg": 1267100,
+        "Uninhabited_Veg": 918527,
+        "Med_Dens_NoVeg": 1289955,
+        "Water": 934737,
+        "Med_Dens_Interface": 731973,
+        "Low_Dens_Intermix": 440335,
+        "Very_Low_Dens_Veg": 406945,
+        "High_Dens_Interface": 344939,
+        "Very_Low_Dens_NoVeg": 552211,
+        "Low_Dens_NoVeg": 340647,
+        "Med_Dens_Intermix": 228687,
+        "Low_Dens_Interface": 202916,
+        "High_Dens_Intermix": 5810
+      }
+    },
+    "2010": {
+      "flag": {
+        "0": 7132007,
+        "2": 1365818,
+        "1": 660576
+      },
+      "class": {
+        "High_Dens_NoVeg": 1356237,
+        "Uninhabited_NoVeg": 1450431,
+        "Uninhabited_Veg": 829417,
+        "Med_Dens_NoVeg": 1327454,
+        "Water": 934737,
+        "Med_Dens_Interface": 777693,
+        "Low_Dens_Intermix": 443066,
+        "Very_Low_Dens_Veg": 384163,
+        "High_Dens_Interface": 392345,
+        "Med_Dens_Intermix": 214475,
+        "Very_Low_Dens_NoVeg": 526515,
+        "Low_Dens_NoVeg": 323053,
+        "Low_Dens_Interface": 195780,
+        "High_Dens_Intermix": 3035
+      }
+    },
+    "2020": {
+      "flag": {
+        "0": 7117813,
+        "2": 1397146,
+        "1": 643442
+      },
+      "class": {
+        "High_Dens_NoVeg": 1403220,
+        "Uninhabited_NoVeg": 1415711,
+        "Uninhabited_Veg": 816446,
+        "Med_Dens_NoVeg": 1331946,
+        "Water": 934737,
+        "Med_Dens_Interface": 784302,
+        "Low_Dens_Intermix": 437053,
+        "Very_Low_Dens_Veg": 374116,
+        "High_Dens_Interface": 416681,
+        "Med_Dens_Intermix": 204349,
+        "Very_Low_Dens_NoVeg": 520113,
+        "Low_Dens_NoVeg": 321524,
+        "Low_Dens_Interface": 196163,
+        "High_Dens_Intermix": 2040
+      }
+    }
+  },
+  "hu_range": {
+    "1990": {
+      "min": 0.0,
+      "max": 3244.0
+    },
+    "2000": {
+      "min": 0.0,
+      "max": 3774.0
+    },
+    "2010": {
+      "min": 0.0,
+      "max": 4022.0
+    },
+    "2020": {
+      "min": 0.0,
+      "max": 4045.0
+    }
+  },
+  "fips_blk20_mismatch_rows": 0,
+  "duplicate_blk20_rows": 1898722,
+  "n_blocks_wui_any_vintage": 2303651,
+  "flag_class_conflict_rows": 0,
+  "schema_problems": []
+}

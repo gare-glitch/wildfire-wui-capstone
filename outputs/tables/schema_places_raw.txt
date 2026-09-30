@@ -1,0 +1,36 @@
+Census TIGER/Line 2025 Places (49 CONUS state files, merged)
+======================================================================
+
+states merged:  49
+places total:   31540
+source CRS:     EPSG:4269
+FUNCSTAT values: ['A', 'B', 'F', 'I', 'N', 'S']
+LSAD values:    ['00', '21', '25', '37', '43', '47', '57', 'CG', 'CN', 'MG', 'UC', 'UG']
+
+fields (first file):
+  - STATEFP
+  - PLACEFP
+  - PLACENS
+  - GEOID
+  - GEOIDFQ
+  - NAME
+  - NAMELSAD
+  - LSAD
+  - CLASSFP
+  - PCICBSA
+  - MTFCC
+  - FUNCSTAT
+  - ALAND
+  - AWATER
+  - INTPTLAT
+  - INTPTLON
+  - geometry
+
+required fields verified in every state file:
+  - STATEFP
+  - PLACEFP
+  - GEOID
+  - NAME
+  - NAMELSAD
+  - LSAD
+  - FUNCSTAT

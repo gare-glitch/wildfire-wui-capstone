@@ -1,0 +1,47 @@
+{
+  "states_expected": 49,
+  "states_read": 49,
+  "columns_first_file": [
+    "STATEFP",
+    "PLACEFP",
+    "PLACENS",
+    "GEOID",
+    "GEOIDFQ",
+    "NAME",
+    "NAMELSAD",
+    "LSAD",
+    "CLASSFP",
+    "PCICBSA",
+    "MTFCC",
+    "FUNCSTAT",
+    "ALAND",
+    "AWATER",
+    "INTPTLAT",
+    "INTPTLON",
+    "geometry"
+  ],
+  "n_places_total": 31540,
+  "crs_first_file": "EPSG:4269",
+  "funcstat_values": [
+    "A",
+    "B",
+    "F",
+    "I",
+    "N",
+    "S"
+  ],
+  "lsad_values": [
+    "00",
+    "21",
+    "25",
+    "37",
+    "43",
+    "47",
+    "57",
+    "CG",
+    "CN",
+    "MG",
+    "UC",
+    "UG"
+  ]
+}

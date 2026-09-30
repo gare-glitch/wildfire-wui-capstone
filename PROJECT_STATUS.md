@@ -1,49 +1,39 @@
 # PROJECT STATUS — wildfire-wui-capstone
 
-_Last updated: 2026-09-30 (Stage 1 complete — all validation checks passing)_
+_Last updated: 2026-09-30 (Stage 1 complete; Stage 2 WUI integration complete
+and validated — 0 critical failures)_
 
 ## Current Stage
 
-**Stage 1 COMPLETE — historical MTBS wildfire × U.S. county spatial database
-built and validated.** No WUI integration, no environmental predictors, no
-modeling (per project rules, modeling stays prohibited until spatial data
-validation passes — it now has).
+**Stage 2 COMPLETE — SILVIS WUI × fire × county integration, Nature 2020
+sensitivity comparison, and Census Places, all validated.** Modeling remains
+prohibited until a later stage (AGENTS.md #11); Stage 1 and Stage 2 spatial
+validation have both passed.
 
 ## Completed
 
-- [x] Project repository structure (config/, src/, tests/, docs/, outputs/,
-      data/ with raw|interim|processed tiers).
-- [x] Authoritative sources identified, downloaded, checksummed, documented
-      (see docs/data_sources.md and data/raw/provenance.json):
-      MTBS national burned-area boundaries (USGS EROS/USFS) and 2025
-      TIGER/Line national counties (U.S. Census Bureau).
-- [x] Environment: Python 3.12 venv, pinned requirements.txt
-      (geopandas 1.2.0, pandas 3.0.6, shapely 2.1.2, pyogrio 0.13.0,
-      pyarrow 25.0.1, matplotlib 3.11.2, numpy 2.5.3, pytest 9.1.1).
-- [x] Schema inspection reports saved
-      (outputs/tables/schema_mtbs_raw.{txt,json},
-      schema_counties_raw.{txt,json}).
-- [x] Preprocessing: cleaned GeoParquet outputs; 51 invalid MTBS geometries
-      repaired via make_valid (logged); counties needed no repair; county
-      areas cross-checked against Census ALAND+AWATER (max diff 0.14 km²).
-- [x] Fire×county geometric intersection in EPSG:5070
-      (19,009 fragments; 3,024 fires span >1 county, max 9 counties).
-- [x] County-year table (9,671 rows) + all-years county summary (3,109 rows,
-      zero-filled) with unique dissolved burn footprint.
-- [x] Validation suite: 25 automated checks, 24 PASS + 1 INFO, 0 critical
-      failures, 0 warnings
-      (outputs/tables/data_validation_report.csv, validation_summary.md).
-- [x] QA maps: cumulative burned area, fire count, % unique footprint
-      (outputs/figures/map_conus_*.png).
-- [x] Documentation: README (reproduction), AGENTS.md (13 rules),
-      docs/methodology.md, docs/data_dictionary.md, docs/data_sources.md.
-- [x] Automated tests: 61 passed, 0 failed (pytest; includes regression test
-      for a CRS-mismatch footprint bug found and fixed during the run).
-- [x] One-command reproduction: `python run_pipeline.py` (or `make stage1`).
+Stage 1 (unchanged; see Validation Results below):
+- [x] MTBS × county spatial database, 25-check validation, QA maps.
+
+Stage 2 (executed 2026-09-30; pipeline exit 0):
+- [x] SILVIS GDB schema inspection + WUI fragments + county WUI by vintage
+      (3,109 counties × 4 vintages = 12,436 rows).
+- [x] Vintage-aligned fire × WUI × county intersection
+      (9,671 county-year rows; 12,436 county-period rows).
+- [x] County WUI change 1990→2000→2010→2020 (12,436 rows).
+- [x] Schug et al. 2023 Nature raster zonal stats (3,109 county rows;
+      929 CONUS-intersecting tiles processed of 1,180 bbox candidates /
+      3,157 mosaic tiles).
+- [x] SILVIS vs Nature 2020 comparison (3,109 rows; Pearson r=0.7898).
+- [x] Census Places WUI / fire / exposure (31,540 places; 126,160
+      place-vintage rows).
+- [x] Stage 2 validation: 26 checks, 25 PASS + 1 WARN, 0 FAIL.
+- [x] 7 Stage 2 QA figures in `outputs/figures/`.
+- [x] pytest: 111 passed (includes VRT rasterXSize/rasterYSize regression).
 
 ## In Progress
 
-- Nothing for Stage 1. Awaiting direction to begin Stage 2.
+- Nothing for Stage 2. Awaiting review before commit, then Stage 3 direction.
 
 ## Validation Results
 
@@ -65,9 +55,33 @@ Full report: `outputs/tables/data_validation_report.csv` — run 2026-09-30.
 - Event accounting: raw 30,933 → type filter 16,983 → year filter 16,909 →
   CONUS 15,540 retained; 22 intersection slivers <1e-4 km² dropped.
 
+Stage 2 (`validate_stage2`, same report file, 2026-09-30 13:46):
+- 26 checks, 25 PASS, 1 WARN (nat-02), 0 FAIL.
+- SILVIS domains match documentation; Nature observed classes {0–8}.
+- County WUI grid complete: 12,436 GEOID×vintage rows; max SILVIS
+  pct_county_wui = 91.77%.
+- Temporal alignment: 0 rows with 2020 WUI on pre-2020 fires; 898 pre-1990
+  baseline rows have null WUI exposure.
+- County-year WUI fire: 9,671 fire-positive rows (not a complete county × year
+  panel). Annual WUI burn ≤ total burn and annual WUI burn ≤ vintage WUI area.
+  Total burn is not required to be ≤ WUI area (1,876 county-years have more
+  burn than WUI, which is non-WUI land).
+- County-period: 4 periods 1990-99 … 2020-24; 0 footprint violations.
+- Change table: 4 transitions, 3,109 counties, internally consistent.
+- Nature vs county area: nominal pixel areas can exceed the legal polygon
+  by the EQUI7 azimuthal-equidistant scale (7 Virginia independent cities,
+  max 101.87%). Ground-corrected WUI / legal area is ≤ 99.98% everywhere.
+  nat-02 WARN: 292 counties have nominal classified coverage < 90% of the
+  legal polygon; that tracks Census water (r = −0.994). 14 remain < 90% of
+  ALAND because raster value 0 covers land. See
+  `outputs/tables/stage2_methodological_audit.md`.
+- SILVIS vs Nature: CONUS WUI 749,991 vs 1,147,967 km²; Pearson r=0.7898;
+  32 presence disagreements. Products are independent definitions.
+- Places: 7-digit GEOIDs only; WUI ≤ place area; pre-baseline null exposure.
+
 ## Problems / Blockers
 
-None. Two data-quality observations (documented, not blockers):
+None blocking Stage 2 completion. Data-quality observations:
 
 1. MTBS `incid_type` includes 4,311 "Other" events not described in the FGDC
    metadata domain, concentrated 1984–2009 (1,898 in Florida). Excluded from
@@ -75,6 +89,15 @@ None. Two data-quality observations (documented, not blockers):
    them.
 2. MTBS release years 2025 (69 events) and 2026 (21 events) are incomplete
    mapping years; analysis truncated to the stable 1984–2024 window.
+3. Nature nominal coverage is below 90% of the legal polygon in 292
+   counties because that denominator includes water (correlation with water
+   fraction −0.994). 14 counties remain below 90% of Census land area;
+   their gap is raster value 0 on land (mostly coastal marsh, plus Davis
+   County, UT and Day County, SD). Documented in the Stage 2 audit; not
+   clipped.
+4. Nature CONUS WUI area is ~53% larger than SILVIS 2020 (1.15M vs 0.75M
+   km²) on nominal pixel area. The EQUI7 scale is only about 1.5% and does
+   not explain that gap. The products use independent definitions.
 
 ## Key Decisions
 
@@ -113,10 +136,16 @@ None. Two data-quality observations (documented, not blockers):
     `compute_footprint_by_county`; new CRITICAL check agg-09
     (footprint>0 wherever fires occurred) plus a pytest regression test now
     guard this permanently.
+11. **Nature WUI is a 2020-only sensitivity layer**, never applied to historic
+    fire years. The NA mosaic VRT uses `rasterXSize`/`rasterYSize` (not
+    `sizeX`/`sizeY`), `SrcRect`/`DstRect` `xOff`/`yOff`/`xSize`/`ySize`, and
+    band `NoDataValue` 255. Parser regression tests lock these names.
+12. **Large artifacts may live in `$WILDFIRE_WUI_CACHE`** (default
+    `~/.cache/wildfire-wui-capstone`) or `$WILDFIRE_WUI_DATA_ROOT`; source
+    never hardcodes `/Users/<username>/...`.
 
 ## Next Step
 
-Stage 2 — integrate WUI data: SILVIS U.S. WUI 1990/2000/2010/2020 and the
-Schug et al. (2023) global WUI layer as comparison, joined to the county
-tables by spatial overlay, with jurisdiction-appropriate handling for
-AK/HI/PR if non-CONUS scope is added.
+Scientific review of Stage 2 outputs (this report), then a commit. Stage 3
+(environmental predictors) is next after that review. Modeling stays gated
+on AGENTS.md #11.

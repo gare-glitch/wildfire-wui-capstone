@@ -1,0 +1,36 @@
+{
+  "n_counties": 3109,
+  "n_well_covered_counties": 2652,
+  "coverage_threshold_pct": 95.0,
+  "area_correlation_all_counties": {
+    "pearson": 0.7898,
+    "spearman": 0.8304,
+    "n": 3109
+  },
+  "area_correlation_well_covered": {
+    "pearson": 0.7913,
+    "spearman": 0.8368,
+    "n": 2652
+  },
+  "pct_correlation_all_counties": {
+    "pearson": 0.7437,
+    "spearman": 0.8337,
+    "n": 3109
+  },
+  "pct_correlation_well_covered": {
+    "pearson": 0.7507,
+    "spearman": 0.847,
+    "n": 2652
+  },
+  "conus_silvis_wui_km2": 749991.1,
+  "conus_nature_wui_km2": 1147966.8,
+  "mean_abs_area_diff_km2": 160.446,
+  "median_abs_area_diff_km2": 88.726,
+  "mean_abs_pct_point_diff": 10.493,
+  "n_counties_nature_gt_silvis": 2554,
+  "n_counties_silvis_gt_nature": 555,
+  "n_presence_disagreement": 32,
+  "mean_interface_share_silvis_pct": 26.65,
+  "mean_interface_share_nature_pct": 18.05,
+  "methodological_note": "Products are independent definitions: SILVIS applies the Federal Register 66:751 census-block housing-density/vegetation rule; Schug et al. 2023 classify a 10 m grid from building/settlement proximity to wildland vegetation. Neither is treated as correct."
+}

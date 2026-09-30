@@ -36,8 +36,10 @@ from common import (  # noqa: E402
     RAW_DIR,
     ensure_dirs,
     get_logger,
+    load_analysis_config,
     load_datasets_config,
     setup_logging,
+    stored_path,
     utc_now_iso,
 )
 
@@ -173,40 +175,85 @@ def head_info(url: str) -> dict:
 # ---------------------------------------------------------------------------
 # Main per-dataset routine
 # ---------------------------------------------------------------------------
-def acquire_dataset(key: str, meta: dict, force: bool = False) -> dict:
-    """Download (or reuse) one dataset and return its provenance record."""
-    url = meta["url"]
-    fname = url.split("/")[-1].split("?")[0]
-    dest_dir = RAW_DIR / key
+def file_specs_from_meta(meta: dict) -> list[dict]:
+    """Expand a dataset registry entry into concrete file specs.
+
+    Supports:
+    - `url`: single file
+    - `url_pattern` + state FIPS list: one file per CONUS state (e.g. TIGER
+      state place files); the FIPS list comes from config/analysis.yaml so
+      the scope definition lives in exactly one place.
+    - `additional_files`: auxiliary archives downloaded alongside the primary
+    """
+    specs: list[dict] = []
+    if "url" in meta:
+        specs.append({
+            "url": meta["url"],
+            # Zenodo API URLs end in '/content'; the documented archive name
+            # is the canonical local filename for the primary file.
+            "filename": meta.get("documented_file_name"),
+            "expected_archive_member_suffix": meta.get(
+                "expected_archive_member_suffix", ".shp"
+            ),
+            "auto_extract": meta.get("auto_extract", True),
+            "role": "primary",
+        })
+    if "url_pattern" in meta:
+        if "state_fips_source" in meta:
+            conus_fips = load_analysis_config()["scope"]["conus_state_fips"]
+            for fips in conus_fips:
+                specs.append({
+                    "url": meta["url_pattern"].format(state_fips=fips),
+                    "filename": None,  # derived from the URL (tl_2025_XX_place.zip)
+                    "expected_archive_member_suffix": meta.get(
+                        "expected_archive_member_suffix", ".shp"
+                    ),
+                    "auto_extract": meta.get("auto_extract", True),
+                    "role": "primary",
+                })
+    for extra in meta.get("additional_files", []):
+        specs.append({
+            "url": extra["url"],
+            "filename": extra.get("documented_file_name"),
+            "expected_archive_member_suffix": extra.get(
+                "expected_archive_member_suffix", ".shp"
+            ),
+            "auto_extract": extra.get("auto_extract", True),
+            "role": "auxiliary",
+        })
+    if not specs:
+        raise ValueError("dataset entry defines no url / url_pattern / additional_files")
+    return specs
+
+
+def acquire_one_file(url: str, dest_dir: Path, expected_suffix: str,
+                     force: bool = False, fname: str | None = None) -> dict:
+    """Download (or reuse) one archive and return its provenance record.
+
+    Raw data is immutable: downloads land as '<name>.zip.part' and are
+    renamed atomically only after passing integrity checks; existing valid
+    files are never re-downloaded; corrupt files are quarantined with a
+    '.corrupt' suffix and re-fetched.
+
+    `fname` overrides the URL-derived filename (needed where API URLs do not
+    end in the archive name, e.g. Zenodo '/content' endpoints).
+    """
+    fname = fname or url.split("/")[-1].split("?")[0]
     dest = dest_dir / fname
-    expected_suffix = meta.get("expected_archive_member_suffix", ".shp")
 
-    record: dict = {
-        "display_name": meta.get("display_name"),
-        "provider": meta.get("provider"),
-        "url": url,
-        "documentation_urls": meta.get("documentation_urls", []),
-        "documented_file_name": meta.get("documented_file_name"),
-    }
-    for k in ("release_date", "boundaries_as_of", "renewal"):
-        if k in meta:
-            record[k] = meta[k]
-
-    # Reuse existing raw file if it validates. Never overwrite raw data.
     if dest.exists() and not force:
         ok, _ = validate_zip_archive(dest, expected_suffix)
         if ok:
             log.info("Reusing existing valid raw file: %s", dest)
-            record.update({
+            return {
+                "url": url,
+                "file_name": fname,
                 "status": "cached",
                 "retrieval_utc": utc_now_iso(),
                 "size_bytes": dest.stat().st_size,
                 "sha256": sha256_of_file(dest),
                 "archive_valid": True,
-            })
-            record.update(head_info(url))
-            record["extraction_dir"] = str(extract_if_needed(dest_dir, dest, expected_suffix))
-            return record
+            }
         log.warning("Existing file %s failed validation; quarantining for re-download.", dest)
         quarantine(dest)
 
@@ -214,20 +261,105 @@ def acquire_dataset(key: str, meta: dict, force: bool = False) -> dict:
     dest, _resumed = download_file(url, dest)
 
     ok, members = validate_zip_archive(dest, expected_suffix)
-    record.update(head_info(url))
-    record.update({
+    record = {
+        "url": url,
+        "file_name": fname,
         "status": "downloaded",
         "retrieval_utc": utc_now_iso(),
         "size_bytes": dest.stat().st_size,
         "sha256": sha256_of_file(dest),
         "archive_valid": ok,
         "archive_members": members,
-    })
+    }
     if not ok:
         quarantine(dest)
         raise RuntimeError(f"Downloaded archive failed validation: {dest}")
+    return record
 
-    record["extraction_dir"] = str(extract_if_needed(dest_dir, dest, expected_suffix))
+
+def acquire_dataset(key: str, meta: dict, force: bool = False) -> dict:
+    """Acquire every file of a dataset and return its provenance record."""
+    dest_dir = RAW_DIR / key
+    specs = file_specs_from_meta(meta)
+    default_suffix = meta.get("expected_archive_member_suffix", ".shp")
+
+    record: dict = {
+        "display_name": meta.get("display_name"),
+        "provider": meta.get("provider"),
+        "documentation_urls": meta.get("documentation_urls", []),
+        "documented_file_name": meta.get("documented_file_name"),
+        "n_files": len(specs),
+    }
+    for k in ("release_date", "boundaries_as_of", "renewal", "doi", "paper_doi",
+              "layer_name", "crs_note", "methodology_citation", "class_domain"):
+        if k in meta:
+            record[k] = meta[k]
+
+    file_records: dict[str, dict] = {}
+    all_ok = True
+    first_primary_seen = False
+    for spec in specs:
+        suffix = spec.get("expected_archive_member_suffix", default_suffix)
+        try:
+            frec = acquire_one_file(
+                spec["url"], dest_dir, suffix, force=force,
+                fname=spec.get("filename"),
+            )
+        except Exception as exc:  # noqa: BLE001 - record and continue
+            log.error("FAILED to acquire %s: %s", spec["url"], exc)
+            frec = {
+                "url": spec["url"],
+                "status": "failed",
+                "error": str(exc),
+                "attempted_utc": utc_now_iso(),
+            }
+            all_ok = False
+        url_key = frec.get("file_name") or spec["url"].split("/")[-1]
+        file_records[url_key] = frec
+        # Upstream metadata for the first primary file only (best effort);
+        # per-state pattern datasets share one host and release.
+        if spec["role"] == "primary" and frec.get("status") != "failed" \
+                and not first_primary_seen:
+            frec.setdefault("upstream", head_info(spec["url"]))
+            first_primary_seen = True
+
+    record.update({
+        "files": file_records,
+        "archive_valid": all_ok,
+        "retrieval_utc": utc_now_iso(),
+    })
+    # Keep the Stage-1 single-file contract: top-level url/sha256/size for the
+    # first primary file so existing consumers keep working.
+    primary = next((f for f in file_records.values() if f.get("status") != "failed"), None)
+    if primary is not None:
+        record.update({
+            "url": primary["url"],
+            "sha256": primary.get("sha256"),
+            "size_bytes": primary.get("size_bytes"),
+            "status": primary.get("status"),
+        })
+    else:
+        record.update({"url": specs[0]["url"], "status": "failed"})
+
+    if not all_ok:
+        record["status"] = "failed"
+
+    # Extraction is opt-out for very large archives processed directly from
+    # the zip via GDAL /vsizip/ (disk-constrained environments).
+    if meta.get("auto_extract", True) and record.get("status") != "failed":
+        suffix = specs[0].get("expected_archive_member_suffix", default_suffix)
+        # The primary archive's local filename (documented name when the
+        # registry provides one; URL basename otherwise).
+        primary_fname = specs[0].get("filename") or \
+            specs[0]["url"].split("/")[-1].split("?")[0]
+        archive = dest_dir / primary_fname
+        try:
+            record["extraction_dir"] = stored_path(
+                extract_if_needed(dest_dir, archive, suffix)
+            )
+        except Exception as exc:  # noqa: BLE001
+            log.error("Extraction failed for %s: %s", key, exc)
+            record["extraction_error"] = str(exc)
     return record
 
 
@@ -271,8 +403,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--only",
-        choices=list(load_datasets_config().keys()),
-        help="Restrict to a single dataset key (default: all).",
+        help="Restrict to dataset key(s), comma-separated (default: all).",
     )
     parser.add_argument(
         "--force",
@@ -285,7 +416,14 @@ def main(argv: list[str] | None = None) -> int:
     ensure_dirs()
 
     datasets = load_datasets_config()
-    keys = [args.only] if args.only else list(datasets.keys())
+    if args.only:
+        keys = [k.strip() for k in args.only.split(",") if k.strip()]
+        unknown = [k for k in keys if k not in datasets]
+        if unknown:
+            log.error("Unknown dataset key(s): %s", unknown)
+            return 2
+    else:
+        keys = list(datasets.keys())
 
     provenance: dict = {}
     if PROVENANCE_PATH.exists():

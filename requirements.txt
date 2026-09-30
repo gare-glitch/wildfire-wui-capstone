@@ -1,4 +1,4 @@
-# wildfire-wui-capstone — Stage 1 requirements
+# wildfire-wui-capstone — Stage 1 + Stage 2 requirements
 # Exact versions installed and tested in this repository (Python 3.12, macOS arm64).
 # Regenerate with: pip freeze > requirements.txt  (only after re-validating the pipeline)
 geopandas==1.2.0
@@ -8,7 +8,10 @@ pyogrio==0.13.0
 pyarrow==25.0.1
 requests==2.34.2
 numpy==2.5.3
+scipy==1.16.2
 matplotlib==3.11.2
 pytest==9.1.1
 PyYAML==6.0.3
 pyproj==3.8.0
+rasterio==1.5.1
+exactextract==0.3.0

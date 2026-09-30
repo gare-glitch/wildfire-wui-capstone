@@ -1,8 +1,12 @@
-.PHONY: stage1 env test clean
+.PHONY: stage1 stage2 env test clean
 
 # One-command Stage 1 reproduction.
 stage1:
 	.venv/bin/python run_pipeline.py
+
+# One-command Stage 2 (WUI integration) reproduction; requires Stage 1 done.
+stage2:
+	.venv/bin/python run_pipeline.py --stage-set 2
 
 # Set up the Python environment from scratch.
 env:

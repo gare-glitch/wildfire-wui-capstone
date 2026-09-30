@@ -51,3 +51,88 @@ census_counties:
     Includes Virginia independent cities as county equivalents; GEOID
     (STATEFP+COUNTYFP) is the canonical identifier.
   renewal: "Annual release (next: TIGER 2026, typically mid/late September 2026)"
+
+silvis_wui:
+  display_name: "SILVIS U.S. Wildland-Urban Interface (WUI) Change 1990-2020 (version 4)"
+  provider: >-
+    SILVIS Lab, Department of Forest & Wildlife Ecology, University of
+    Wisconsin-Madison (also archived as USDA Forest Service Research Data
+    Archive product RDS-2015-0012-4, DOI 10.2737/RDS-2015-0012-4)
+  url: "https://geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip"
+  format: "zipped Esri File Geodatabase (polygon layer of 2020 census-block-based uniform housing/landcover areas)"
+  expected_archive_member_suffix: ".gdbtable"
+  auto_extract: false
+  documentation_urls:
+    - "https://silvis.forest.wisc.edu/data/wui-change/"
+    - "https://www.fs.usda.gov/rds/archive/products/RDS-2015-0012-4/_metadata_RDS-2015-0012-4.html"
+    - "https://geoserver.silvis.forest.wisc.edu/geodata/wui_change_2020_v4/CONUS_WUI_block_1990_2020_change_v4_FGDC_MetadataUpdate.html"
+  documented_file_name: "CONUS_WUI_block_1990_2020_change_v4_gcs_na83_GDB.zip"
+  release_date: "2023-08-10 (v4; SILVIS page last updated February 2025)"
+  spatial_coverage: "Conterminous United States only (lower 48 states + DC; no Alaska/Hawaii/territories)"
+  temporal_coverage: "WUI classes for 1990, 2000, 2010, 2020 (housing 1990-2020; vegetation 1992/2001/2011/2019)"
+  layer_name: "CONUS_WUI_block_1990_2020_change_v4_gcs_na83"
+  crs_note: >-
+    Distributed in NAD83 geographic coordinates (GCS_North_American_1983,
+    EPSG:4269); the embedded Esri Shape_Area field is in square degrees and is
+    unusable for area math — all areas are recomputed in EPSG:5070.
+  methodology_citation: >-
+    Radeloff, V.C., Helmers, D.P., Kramer, H.A., Mockrin, M.H.,
+    Alexandre, P.M., Bar-Massada, A., ... Stewart, S.I. (2018) "Rapid growth
+    of the US wildland-urban interface raises wildfire risk." PNAS 115(13).
+    WUI mapped per the Federal Register definition (66 FR 751, 2001):
+    intermix = >50% wildland vegetation and >=6.177635 housing units/km2;
+    interface = <=50% vegetation housing areas within 2.414 km of contiguous
+    vegetation areas >=75% wildland vegetation (>=500 ha).
+  renewal: "As needed (v4 is the current version; SILVIS updates the product page)"
+
+nature_wui:
+  display_name: "Map of the global wildland-urban interface (Schug et al. 2023, version 1.1) — North America tiles"
+  provider: "SILVIS Lab, University of Wisconsin-Madison / Humboldt-University Berlin, published via Zenodo"
+  url: "https://zenodo.org/api/records/7941460/files/NA.zip/content"
+  format: >-
+    Zipped GeoTIFF EQUI7 tiles (100 km x 100 km, 10 m resolution, 8 discrete
+    WUI classes) plus GDAL VRT mosaic; downloaded North America (NA) subset.
+  expected_archive_member_suffix: ".tif"
+  auto_extract: false
+  documentation_urls:
+    - "https://zenodo.org/records/7941460"
+    - "https://www.nature.com/articles/s41586-023-06320-0"
+    - "https://geoserver.silvis.forest.wisc.edu/geodata/globalwui"
+    - "https://github.com/franzschug/global_wildland_urban_interface"
+  documented_file_name: "NA.zip"
+  release_date: "2023-04-01 (version 1.1; version 1.0 DOI 10.5281/zenodo.7791980)"
+  doi: "10.5281/zenodo.7941460"
+  paper_doi: "10.1038/s41586-023-06320-0"
+  spatial_coverage: "Global product; NA.zip covers North America; analysis clips to CONUS"
+  temporal_coverage: "Approximately 2020 conditions (built on ~2020 building-footprint and land-cover inputs)"
+  class_domain: >-
+    1 forest/shrubland/wetland intermix WUI; 2 forest/shrubland/wetland
+    interface WUI; 3 grassland intermix WUI; 4 grassland interface WUI;
+    5 non-WUI forest/shrub/wetland; 6 non-WUI grassland; 7 non-WUI urban;
+    8 non-WUI other.
+  additional_files:
+    - url: "https://zenodo.org/api/records/7941460/files/tabular_script_meta_data.zip/content"
+      documented_file_name: "tabular_script_meta_data.zip"
+      # Auxiliary paper results (xlsx tables + scripts), no CSVs in this archive.
+      expected_archive_member_suffix: ".xlsx"
+      auto_extract: false
+  renewal: "Version 1.1 is the published record version"
+
+census_places:
+  display_name: "2025 TIGER/Line Shapefiles: Places (state files, CONUS subset)"
+  provider: "U.S. Census Bureau"
+  url_pattern: "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/tl_2025_{state_fips}_place.zip"
+  state_fips_source: "config/analysis.yaml scope.conus_state_fips (48 states + DC)"
+  format: "zipped ESRI polygon shapefiles (one per state; TIGER2025 has no national PLACE file)"
+  expected_archive_member_suffix: ".shp"
+  auto_extract: false
+  documentation_urls:
+    - "https://www.census.gov/geographies/mapping-files/2025/geo/tiger-line-file.html"
+    - "https://www2.census.gov/geo/tiger/TIGER2025/PLACE/"
+  boundaries_as_of: "2025-01-01"
+  spatial_coverage: "Incorporated places and census designated places; state files merged for CONUS"
+  geographic_note: >-
+    Places do not tile the full land area of the U.S. and are conceptually
+    distinct from counties; outputs keyed by PLACE GEOID
+    (STATEFP+PLACEFP). Place outputs are kept separate from county outputs.
+  renewal: "Annual release"

@@ -29,6 +29,7 @@ from common import (  # noqa: E402
     ensure_dirs,
     get_logger,
     load_analysis_config,
+    resolve_stored_path,
 )
 from preprocess_mtbs import write_schema_report  # noqa: E402  (shared helper)
 
@@ -47,13 +48,26 @@ VA_INDEPENDENT_CITY_MIN_COUNTYFP = 500  # Census convention: VA independent
 
 
 def find_raw_shapefile() -> Path:
+    """Locate the extracted county shapefile.
+
+    Primary path: the provenance manifest's extraction_dir; fallback: the
+    standard extraction location (download failures leave no record).
+    """
+    shp_dir: Path | None = None
     prov = RAW_DIR / "provenance.json"
-    with open(prov, "r", encoding="utf-8") as fh:
-        extraction_dir = json.load(fh)["datasets"]["census_counties"]["extraction_dir"]
-    shp_dir = Path(extraction_dir)
+    if prov.exists():
+        with open(prov, "r", encoding="utf-8") as fh:
+            rec = json.load(fh).get("datasets", {}).get("census_counties", {})
+        if rec.get("extraction_dir"):
+            shp_dir = resolve_stored_path(rec["extraction_dir"])
+    if shp_dir is None or not shp_dir.exists():
+        shp_dir = RAW_DIR / "census_counties" / "extracted"
     shps = sorted(shp_dir.glob("*.shp"))
     if len(shps) != 1:
-        raise FileNotFoundError(f"Expected exactly one .shp in {shp_dir}, found {shps}")
+        raise FileNotFoundError(
+            f"Expected exactly one .shp in {shp_dir}, found {shps}. "
+            "Run the download stage first."
+        )
     return shps[0]
 
 
@@ -143,6 +157,11 @@ def main(argv: list[str] | None = None) -> int:
     # --- projection + area (EPSG:5070, never lat/lon) -------------------------
     counties = counties.to_crs(int(cfg["crs"]["conus_equal_area"].split(":")[1]))
     counties["county_area_km2"] = counties.geometry.area * 1e-6
+    # Census published land and water (m² → km²). Kept beside the legal-polygon
+    # area so WUI percentages can use either denominator. ALAND/AWATER are
+    # attributes, not a replacement for the projected polygon area.
+    counties["county_land_area_km2"] = counties["ALAND"].astype("float64") * 1e-6
+    counties["county_water_area_km2"] = counties["AWATER"].astype("float64") * 1e-6
 
     # Cross-check against published ALAND+AWATER (m^2) — TIGER polygons are
     # slightly generalized, so small differences are expected and recorded.

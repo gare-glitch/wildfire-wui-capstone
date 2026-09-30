@@ -178,3 +178,106 @@ mapping:
   colormap_burned_area: "YlOrRd"
   colormap_fire_count: "OrRd"
   colormap_footprint: "PuOr"
+
+# =====================================================================
+# Stage 2 — temporal WUI exposure layer
+# =====================================================================
+stage2:
+  wui_vintages: [1990, 2000, 2010, 2020]
+
+  # Temporal alignment: each SILVIS decadal snapshot represents fire years in
+  # its period. Do NOT interpolate WUI between decades and do NOT apply the
+  # 2020 map to earlier years.
+  vintage_periods:
+    "1990": {min_year: 1990, max_year: 1999}
+    "2000": {min_year: 2000, max_year: 2009}
+    "2010": {min_year: 2010, max_year: 2019}
+    "2020": {min_year: 2020, max_year: 2024}   # 2024 = last stable MTBS year
+  pre_wui_baseline:
+    min_year: 1984
+    max_year: 1989
+    label: "pre_1990_no_wui_baseline"
+    note: >-
+      MTBS fire years 1984-1989 precede the earliest SILVIS snapshot (1990).
+      Fire history is retained for these years but temporally aligned WUI
+      exposure is marked unavailable (null), never backfilled with 1990 WUI
+      in the primary metric.
+
+  silvis:
+    layer: "CONUS_WUI_block_1990_2020_change_v4_gcs_na83"
+    # Verified against the FGDC metadata shipped with the v4 archive
+    # (data/raw/silvis_wui/CONUS_WUI_block_1990_2020_change_v4_FGDC_MetadataUpdate.xml):
+    flag_fields:
+      "1990": "WUIFLAG1990"
+      "2000": "WUIFLAG2000"
+      "2010": "WUIFLAG2010"
+      "2020": "WUIFLAG2020"
+    class_fields:
+      "1990": "WUICLASS1990"
+      "2000": "WUICLASS2000"
+      "2010": "WUICLASS2010"
+      "2020": "WUICLASS2020"
+    housing_unit_fields:
+      "1990": "HU1990"
+      "2000": "HU2000"
+      "2010": "HU2010"
+      "2020": "HU2020"
+    housing_density_fields:
+      "1990": "HUDEN1990"
+      "2000": "HUDEN2000"
+      "2010": "HUDEN2010"
+      "2020": "HUDEN2020"
+    wui_flag_intermix: 1        # WUIFLAG{year} value for intermix
+    wui_flag_interface: 2       # WUIFLAG{year} value for interface
+    # Enumerated domain of WUICLASS{year} from the FGDC metadata (exact strings):
+    class_domain:
+      - "Water"
+      - "Low_Dens_Intermix"
+      - "Med_Dens_Intermix"
+      - "High_Dens_Intermix"
+      - "Low_Dens_Interface"
+      - "Med_Dens_Interface"
+      - "High_Dens_Interface"
+      - "Low_Dens_NoVeg"
+      - "Med_Dens_NoVeg"
+      - "High_Dens_NoVeg"
+      - "Uninhabited_Veg"
+      - "Uninhabited_NoVeg"
+      - "Very_Low_Dens_Veg"
+      - "Very_Low_Dens_NoVeg"
+    intermix_classes: ["Low_Dens_Intermix", "Med_Dens_Intermix", "High_Dens_Intermix"]
+    interface_classes: ["Low_Dens_Interface", "Med_Dens_Interface", "High_Dens_Interface"]
+    block_id_field: "BLK20"
+    county_fips_field: "fips"
+
+  nature:
+    # Schug et al. 2023 global WUI, ~2020 conditions, 10 m, EQUI7 tiles.
+    wui_class_map:          # raster value -> (category, vegetation grouping)
+      1: {wui: intermix, veg: forest_shrub_wetland}
+      2: {wui: interface, veg: forest_shrub_wetland}
+      3: {wui: intermix, veg: grassland}
+      4: {wui: interface, veg: grassland}
+      5: {wui: null, veg: forest_shrub_wetland}
+      6: {wui: null, veg: grassland}
+      7: {wui: null, veg: urban}
+      8: {wui: null, veg: other}
+    valid_values: [1, 2, 3, 4, 5, 6, 7, 8]
+    wui_values: [1, 2, 3, 4]
+    pixel_resolution_m: 10
+    approx_year: 2020
+    role: "modern 2020 comparison/sensitivity product only — never applied to historic fire years"
+
+  validation:
+    wui_area_tolerance_km2: 0.5        # wui_area vs county_area slack for boundary effects
+    wui_area_tolerance_rel: 0.02       # 2% relative slack vs county area
+    nature_area_tolerance_rel: 0.05    # raster pixel effects vs vector county area
+    max_pct_county_wui: 100.0
+    max_pct_wui_burned_footprint: 100.0
+    min_place_area_km2: 0.01           # tiny Census places exist; only implausible values fail
+
+  mapping:
+    dpi: 200
+    colormap_wui_pct: "Greens"
+    colormap_wui_change: "BrBG"
+    colormap_wui_burned: "OrRd"
+    colormap_disagreement: "RdBu"
